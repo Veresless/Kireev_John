@@ -40,7 +40,7 @@ void Game::start()
 void Game::updateStat()
 {
 	system("cls");
-	std::cout << "Level:" << Level_ << '\t' << "Lifes:" << Lifes_ << "\nScore:" << Schore_ << "\tB:" << Blinky_->getMode() << "\tP:" << Pinky_->getMode() << "\tI:" << Inky_->getMode() << "\tC:" << Clyde_->getMode();
+	std::cout << "Level:" << Level_ << '\t' << "Lifes:" << Lifes_ << "\nScore:" << Schore_;
 }
 void Game::pacManMovement()
 {
