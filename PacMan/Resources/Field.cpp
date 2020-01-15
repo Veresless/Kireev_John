@@ -458,7 +458,7 @@ void Field::castMovement()
 			{
 				bool Ways[4];
 				for (int i = 0; i < 4; i++) Ways[i] = isEmpty(Position, i, Size);
-				if (Pinky_.getMode() == 0) Pinky_.setDirectionPoint(PacMan_.getPoint(), Direction);
+				if (Pinky_.getMode() == 0) Pinky_.setDirectionPoint(PacMan_.getPoint(), PacMan_.getDirection());
 				if (checkSpecial(Position.first / Size, Position.second / Size)) Ways[0] = false;
 				Pinky_.choiseDirection(Ways);
 			}
@@ -475,7 +475,7 @@ void Field::castMovement()
 			{
 				bool Ways[4];
 				for (int i = 0; i < 4; i++) Ways[i] = isEmpty(Position, i, Size);
-				if (Inky_.getMode() == 0) Inky_.setDirectionPoint(PacMan_.getPoint(), Direction, Blinky_.DinamicSprite::getPoint());
+				if (Inky_.getMode() == 0) Inky_.setDirectionPoint(PacMan_.getPoint(), PacMan_.getDirection(), Blinky_.DinamicSprite::getPoint());
 				if (checkSpecial(Position.first / Size, Position.second / Size)) Ways[0] = false;
 				Inky_.choiseDirection(Ways);
 			}
