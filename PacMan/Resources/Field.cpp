@@ -502,7 +502,12 @@ void Field::turnPacMan(Direction const direction)
 }
 bool Field::checkSpecial(const int x, const int y)
 {
-	return (y == 14) && (x == 12) || (y == 14) && (x == 15) || (y == 26) && (x == 12) || (y == 26) && (x == 15);
+	POINT firstPoint = getFirstSpecialPoint();
+	POINT secondPoint = getSecondSpecialPoint();
+	POINT thirdPoint = getThirdSpecialPoint();
+	POINT fourthPoint = getFourthSpecialPoint();
+	return (y == firstPoint.y) && (x == firstPoint.x) || (y == secondPoint.y) && (x == secondPoint.x) ||
+		(y == thirdPoint.y) && (x == thirdPoint.x) || (y == fourthPoint.y) && (x == fourthPoint.x);
 }
 void Field::castMovement()
 {

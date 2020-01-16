@@ -258,5 +258,21 @@ inline const int getCountStatisticStrings()
 {
 	return 2;
 }
+inline const POINT getFirstSpecialPoint()
+{
+	return {12, 14};
+}
+inline const POINT getSecondSpecialPoint()
+{
+	return {15, 14};
+}
+inline const POINT getThirdSpecialPoint()
+{
+	return {12 , 26};
+}
+inline const POINT getFourthSpecialPoint()
+{
+	return {15 , 26};
+}
 #endif
 
