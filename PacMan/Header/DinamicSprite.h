@@ -1,21 +1,39 @@
-#pragma once
+#ifndef H_DINAMIC_SPRITE
+#define H_DINAMIC_SPRITE
+
 #include "BaseSprite.h"
+
+enum Direction
+{
+	UP,
+	LEFT,
+	DOWN,
+	RIGHT
+};
 
 class DinamicSprite : public BaseSprite
 {
-protected:
-	int X_, Y_;
-	int Direction_, Speed_;
 public:
-	DinamicSprite();
-	int getSpeed();
-	void setStartPosition();
-	void setLowSpeed();
-	void setMiddleSpeed();
-	void setHigthSpeed();
-	std::pair<int, int> getPoint();
-	void changePosition(int Horizontal, int Vertical);
-	void changeDirection(int Direction);
-	int getDirection();
-	void print(int Horizontal, int Vertical, HDC hdc);
+	inline const POINT getPosition() const
+	{
+		return point_;
+	}
+	inline const Direction getDirection() const
+	{
+		return direction_;
+	}
+	inline const int getSpeed() const
+	{
+		return speed_;
+	}
+	virtual void setStartPosition() = 0;
+	void setSpeed(const int speed);
+	void move();
+	void setDirection(const Direction direction);
+	const void print(const HDC hdc);
+protected:
+	POINT point_;
+	Direction direction_;
+	int speed_;
 };
+#endif

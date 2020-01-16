@@ -1,83 +1,63 @@
 #include "DinamicSprite.h"
+#include "Constants.h"
 
-void DinamicSprite::setStartPosition()
+void DinamicSprite::move()
 {
-	
-}
-std::pair<int, int>DinamicSprite::getPoint()
-{
-	return { X_, Y_ };
-}
-void DinamicSprite::changePosition(int Horizontal, int Vertical)
-{
-	int Higth = Vertical * Size_;
-	int Width = Horizontal * Size_;
-	switch (Direction_)
+	const int higth = getVertical() * size_;
+	const int width = getHorizontal() * size_;
+
+	switch (direction_)
 	{
-	case 2:
+	case DOWN:
 	{
-		Y_+= Speed_;
-		Y_ %= Higth;
+		point_.y += speed_;
+		point_.y %= higth;
 		break;
 	}
-	case 0:
+	case UP:
 	{
-		Y_ -= Speed_;
-		Y_ += Higth;
-		Y_ %= Higth;
+		point_.y -= speed_;
+		point_.y += higth;
+		point_.y %= higth;
 		break;
 	}
-	case 3:
+	case RIGHT:
 	{
-		X_ += Speed_;
-		X_ %= Width;
+		point_.x += speed_;
+		point_.x %= width;
 		break;
 	}
-	case 1:
+	case LEFT:
 	{
-		X_ -= Speed_;
-		X_ += Width;
-		X_ %= Width;
+		point_.x -= speed_;
+		point_.x += width;
+		point_.x %= width;
 		break;
 	}
 	default:
 		break;
 	}
 }
-DinamicSprite::DinamicSprite()
+void DinamicSprite::setSpeed(const int speed)
 {
-	Direction_ = 0;
-	Speed_ = 4;
+	speed_ = speed;
 }
-int DinamicSprite::getSpeed()
+
+void DinamicSprite::setDirection(const Direction direction)
 {
-	return Speed_;
+	direction_ = direction;
 }
-void DinamicSprite::setLowSpeed()
+const void DinamicSprite::print(const HDC hdc)
 {
-	Speed_ = 1;
-}
-void DinamicSprite::setMiddleSpeed()
-{
-	Speed_ = 2;
-}
-void DinamicSprite::setHigthSpeed()
-{
-	Speed_ = 4;
-}
-void DinamicSprite::changeDirection(int Direction)
-{
-	Direction_ = Direction;
-}
-int DinamicSprite::getDirection()
-{
-	return Direction_;
-}
-void DinamicSprite::print(int Horizontal, int Vertical, HDC hdc)
-{
-	int MaxX = Size_ * Horizontal;
-	int MaxY = Size_ * Vertical;
-	for (int i = 0; i < Size_; i++)
-		for (int j = 0; j < Size_; j++)
-			SetPixel(hdc, (j + X_ + MaxX)%MaxX, (i + Y_ + MaxY) % MaxY, Sample_[i][j]);
+	const int HIGTH = getVertical() * size_;
+	const int WIDTH = getHorizontal() * size_;
+	for (int i = 0; i < size_; i++)
+	{
+		for (int j = 0; j < size_; j++)
+		{
+			const int X = (j + point_.x + WIDTH) % WIDTH;
+			const int Y = (i + point_.y + HIGTH) % HIGTH;
+			SetPixel(hdc, X, Y, sample_[i][j]);
+		}
+	}
 }

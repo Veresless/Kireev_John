@@ -1,31 +1,38 @@
-#pragma once
+#ifndef H_BASE_SPRITE
+#define H_BASE_SPRITE
+
 #include <windows.h>
-#include <utility>
 
 enum SpriteType
 {
-	TWall,
-	TDoor,
-	TSchorePoint,
-	TEnergiser,
-	TEmpty,
-	TPacMan,
-	TCast
+	WALL,
+	SHOREPOINT,
+	ENERGISER,
+	EMPTY,
+	PACMAN,
+	CAST
 };
 
 class BaseSprite 
 {
-protected:
-	int Size_;
-	SpriteType Type_;
-	COLORREF** Sample_;
-	void setDefaultSize();
-	void setDefaultType();
-	void createSample();
 public:
 	BaseSprite();
-	int getSize();
-	SpriteType getType();
-	void initializeSample(COLORREF Color, COLORREF Background);
-	void clearSample();
+	inline const SpriteType getType() const
+	{
+		return type_;
+	}
+	inline COLORREF** getSample() const
+	{
+		return sample_;
+	}
+	void initializeSample(bool sample[], COLORREF color, COLORREF background);
+	~BaseSprite();
+protected:
+	int size_;
+	SpriteType type_;
+	COLORREF** sample_;
+	virtual void setDefaultType() = 0;
+private:
+	void createSample();
 };
+#endif

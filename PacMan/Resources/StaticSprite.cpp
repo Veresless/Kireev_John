@@ -2,11 +2,15 @@
 
 void StaticSprite::printOn(int x, int y, HDC hdc)
 {
-	int XStart = Size_ * x;
-	int YStart = Size_ * y;
-	for (int i = 0; i < Size_; i++)
-		for (int j = 0; j < Size_; j++)
-			SetPixel(hdc, j + XStart, i + YStart, Sample_[i][j]);
+	const int xStart = size_ * x;
+	const int yStart = size_ * y;
+	for (int i = 0; i < size_; i++)
+	{
+		for (int j = 0; j < size_; j++)
+		{
+			SetPixel(hdc, j + xStart, i + yStart, sample_[i][j]);
+		}
+	}
 }
 
 

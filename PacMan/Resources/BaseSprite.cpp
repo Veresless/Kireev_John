@@ -1,39 +1,40 @@
 #include "BaseSprite.h"
+#include "Constants.h"
 
-void BaseSprite::setDefaultSize()
+void BaseSprite::initializeSample(bool sample[], COLORREF color, COLORREF background)
 {
-	Size_ = 8;
-}
-void BaseSprite::setDefaultType()
-{
-
+	for (int i = 0; i < size_; i++)
+	{
+		for (int j = 0; j < size_; j++)
+		{
+			sample_[i][j] = ((true == sample[i*size_+j]) ? color : background);
+		}
+	}
 }
 void BaseSprite::createSample()
 {
-	Sample_ = new COLORREF * [Size_];
-	for (int i = 0; i < Size_; i++) Sample_[i] = new COLORREF[Size_];
-}
-void BaseSprite::initializeSample(COLORREF Color, COLORREF Background)
-{
-
-}
-int BaseSprite::getSize()
-{
-	return Size_;
-}
-SpriteType BaseSprite::getType()
-{
-	return Type_;
-}
-void BaseSprite::clearSample()
-{
-	for (int i = 0; i < Size_; i++)
-		delete[] Sample_[i];
-	delete[] Sample_;
+	sample_ = new COLORREF * [size_];
+	for (int i = 0; i < size_; i++)
+	{
+		sample_[i] = new COLORREF[size_];
+	}
 }
 BaseSprite::BaseSprite()
 {
-	setDefaultSize();
-	setDefaultType();
+	size_ = getSize();
 	createSample();
+}
+BaseSprite::~BaseSprite()
+{
+	if (sample_ != nullptr)
+	{
+		for (int i = 0; i < size_; i++)
+		{
+			if (sample_[i] != nullptr)
+			{
+				delete[] sample_[i];
+			}
+		}
+		delete[] sample_;
+	}
 }

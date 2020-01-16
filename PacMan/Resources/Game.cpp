@@ -1,14 +1,16 @@
-#include "Game.h"
 #include <iostream>
-#include <conio.h>
+#include <string>
 #include <future>
+
+#include "Game.h"
+#include "Constants.h"
 
 void Game::setStartParams()
 {
-	Schore_ = 0;
-	Lifes_ = 2;
-	Level_ = 1;
-	DeltaTime_ = 50;
+	schore_ = 0;
+	lifes_ = getStartLifes();
+	level_ = 1;
+	deltaTime_ = getDefaultDeltaTime();
 }
 Game::Game()
 {
@@ -16,386 +18,332 @@ Game::Game()
 }
 void Game::loadLevel()
 {
-	Field_.printAll();
-	PacMan_ = Field_.getPacMan();
-	Blinky_ = Field_.getBlinky();
-	Pinky_ = Field_.getPinky();
-	Inky_ = Field_.getInky();
-	Clyde_ = Field_.getClyde();
+	field_.printAll();
 }
-bool Game::levelUp()
+const bool Game::levelUp()
 {
-	if (CountEatenPoints_ == 244)
+	if (countEatenPoints_ == getMaxCountPoints())
 	{
-		Level_++;
-		CountEatenPoints_ = 0;
+		level_++;
+		countEatenPoints_ = 0;
 		return true;
 	}
 	return false;
 }
-void Game::start()
+void Game::updateStatistic() const
 {
-	loadLevel();
-}
-void Game::updateStat()
-{
-	system("cls");
-	std::cout << "Level:" << Level_ << '\t' << "Lifes:" << Lifes_ << "\nScore:" << Schore_;
+	std::cout <<  level_ << '\t' << lifes_ << '\t' << schore_ << '\r';
 }
 void Game::pacManMovement()
 {
-	if ((GetKeyState(87) & 0x8000) || (GetKeyState(38) & 0x8000)) // W w and UP
+	if ((GetKeyState(getWKey()) & getBinaryToBool()) || (GetKeyState(getUpKey()) & getBinaryToBool())) // W w and UP
 	{
-		Field_.turnDinamic(PacMan_, 0);
+		field_.turnPacMan(UP);
 	}
-	else if ((GetKeyState(68) & 0x8000) || (GetKeyState(39) & 0x8000)) // D d and RIGHT
+	else if ((GetKeyState(getDKey()) & getBinaryToBool()) || (GetKeyState(getRightKey()) & getBinaryToBool())) // D d and RIGHT
 	{
-		Field_.turnDinamic(PacMan_, 3);
+		field_.turnPacMan(RIGHT);
 	}
-	else if ((GetKeyState(83) & 0x8000) || (GetKeyState(40) & 0x8000)) // S s and DOWN
+	else if ((GetKeyState(getSKey()) & getBinaryToBool()) || (GetKeyState(getDownKey()) & getBinaryToBool())) // S s and DOWN
 	{
-		Field_.turnDinamic(PacMan_, 2);
+		field_.turnPacMan(DOWN);
 	}
-	else if ((GetKeyState(65) & 0x8000) || (GetKeyState(37) & 0x8000)) // A a and LEFT
+	else if ((GetKeyState(getAKey()) & getBinaryToBool()) || (GetKeyState(getLeftKey()) & getBinaryToBool())) // A a and LEFT
 	{
-		Field_.turnDinamic(PacMan_, 1);
+		field_.turnPacMan(LEFT);
 	}
 }
 void Game::castMovement()
 {
-	Field_.castMovement();
+	field_.castMovement();
 }
 void Game::pacManEat()
 {
-	std::pair<int, int> Position = PacMan_->getPoint();
-	int Size = PacMan_->getSize();
-	if (Position.first % Size == 0 && Position.second % Size == 0)
+	POINT position = field_.getPacMan().getPosition();
+	int size = getSize();
+	if (position.x % size == 0 && position.y % size == 0)
 	{
-		if (Field_.getSpriteTypeAt(Position.first / Size, Position.second / Size) == SpriteType::TSchorePoint)
+		if (field_.getSpriteTypeAt(position.x / size, position.y / size) == SpriteType::SHOREPOINT)
 		{
-			Schore_ += 10;
-			CountEatenPoints_++;
-			Field_.setEmptyAt(Position.first / Size, Position.second / Size);
+			schore_ += getPointSchore();
+			countEatenPoints_++;
+			field_.setEmptyAt(position.x / size, position.y / size);
 		}
-		if (Field_.getSpriteTypeAt(Position.first / Size, Position.second / Size) == SpriteType::TEnergiser)
+		if (field_.getSpriteTypeAt(position.x / size, position.y / size) == SpriteType::ENERGISER)
 		{
-			Schore_ += 50;
-			CountEatenPoints_++;
-			if (Level_ < 19)
+			schore_ += getEnergiserSchore();
+			countEatenPoints_++;
+			if (level_ < getLevelWhereCastNotFear())
 			{
-				EnergiserTime_ = GetTickCount64();
-				EnergiserTimeOn_ = false;
-				Field_.fearCast();
-				CastDieCount_ = 1;
+				energiserTime_ = GetTickCount64();
+				energiserTimeOn_ = false;
+				field_.fearCast();
+				castDieCount_ = 1;
 			}
-			Field_.setEmptyAt(Position.first / Size, Position.second / Size);
+			field_.setEmptyAt(position.x / size, position.y / size);
 		}
 	}
 }
 void Game::pacManDie()
 {
-	Live_ = false;
-	Sleep(1000);
-	Field_.normalCast();
-	Field_.resetDinamic();
+	live_ = false;
+	Sleep(getOneSecond());
+	field_.normalCast();
+	field_.resetDinamic();
 }
-bool Game::checkPosition(PacMan* PacMan, Cast* Cast)
+const bool Game::checkPosition(const PacMan& pacMan, const Cast& cast) const
 {
-	std::pair<int, int> FirstPoint = PacMan->getPoint();;
-	int FirstDirection = PacMan->getDirection();
-	int FirstSpeed = PacMan->getSpeed();
-	std::pair<int, int> SecondPoint = Cast->DinamicSprite::getPoint();
-	int SecondDirection = Cast->getDirection();
-	int SecondSpeed = Cast->getSpeed();
-	switch (FirstDirection)
+	POINT firstPoint = pacMan.getPosition();
+	Direction firstDirection = pacMan.getDirection();
+	int firstSpeed = pacMan.getSpeed();
+	POINT secondPoint = cast.getPosition();
+	Direction secondDirection = cast.getDirection();
+	int secondSpeed = cast.getSpeed();
+	POINT NewFirstPoint = { firstPoint.x, firstPoint.y };
+	POINT NewSecondPoint = { secondPoint.x, secondPoint.y };
+	switch (firstDirection)
 	{
-	case 0:
+	case UP:
 	{
-		std::pair<int, int> NewFirstPoint = { FirstPoint.first, FirstPoint.second + FirstSpeed };
-		switch (SecondDirection)
-		{
-		case 0:
-		{
-			return FirstPoint == SecondPoint;
-		}
-		case 1:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first + SecondSpeed, SecondPoint.second };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 2:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first, SecondPoint.second - SecondSpeed };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 3:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first - SecondSpeed, SecondPoint.second };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		default:
-			return false;
-		}
+		NewFirstPoint = { firstPoint.x, firstPoint.y + firstSpeed };
+		break;
 	}
-	case 1:
+	case LEFT:
 	{
-		std::pair<int, int> NewFirstPoint = { FirstPoint.first + FirstSpeed, FirstPoint.second };
-		switch (SecondDirection)
-		{
-		case 0:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first, SecondPoint.second + SecondSpeed };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 1:
-		{
-			return FirstPoint == SecondPoint;
-		}
-		case 2:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first, SecondPoint.second - SecondSpeed };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 3:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first - SecondSpeed, SecondPoint.second };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		default:
-			return false;
-		}
+		NewFirstPoint = { firstPoint.x + firstSpeed, firstPoint.y };
+		break;
 	}
-	case 2:
+	case DOWN:
 	{
-		std::pair<int, int> NewFirstPoint = { FirstPoint.first, FirstPoint.second - FirstSpeed };
-		switch (SecondDirection)
-		{
-		case 0:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first, SecondPoint.second + SecondSpeed };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 1:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first + SecondSpeed, SecondPoint.second };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 2:
-		{
-			return FirstPoint == SecondPoint;
-			
-		}
-		case 3:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first - SecondSpeed, SecondPoint.second };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		default:
-			return false;
-		}
+		NewFirstPoint = { firstPoint.x, firstPoint.y - firstSpeed };
+		break;
 	}
-	case 3:
+	case RIGHT:
 	{
-		std::pair<int, int> NewFirstPoint = { FirstPoint.first - FirstSpeed, FirstPoint.second };
-		switch (SecondDirection)
-		{
-		case 0:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first, SecondPoint.second + SecondSpeed };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 1:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first + SecondSpeed, SecondPoint.second };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 2:
-		{
-			std::pair<int, int> NewSecondPoint = { SecondPoint.first, SecondPoint.second - SecondSpeed };
-			return NewFirstPoint == SecondPoint || FirstPoint == NewSecondPoint || NewFirstPoint == NewSecondPoint || FirstPoint == SecondPoint;
-		}
-		case 3:
-		{
-			return FirstPoint == SecondPoint;
-		}
-		default:
-			return false;
-		}
+		NewFirstPoint = { firstPoint.x - firstSpeed, firstPoint.y };
+		break;
 	}
 	default:
-		return false;
-	}
-}
-void Game::Die()
-{
-	if (checkPosition(PacMan_, Blinky_))
 	{
-		if (Blinky_->getMode() == CastMode::Fear)
-		{
-			Schore_ += 200 * CastDieCount_++;
-			Field_.normalBlinky();
-			Field_.setBlinky();
-		}
-		else pacManDie();
+		break;
 	}
-	if (checkPosition(PacMan_, Pinky_))
+	}
+	switch (secondDirection)
 	{
-		if (Pinky_->getMode() == CastMode::Fear)
-		{
-			Schore_ += 200 * CastDieCount_++;
-			Field_.normalPinky();
-			Field_.setPinky();
-		}
-		else pacManDie();
-	}
-	if (checkPosition(PacMan_, Inky_))
+	case UP:
 	{
-		if (Inky_->getMode() == CastMode::Fear)
-		{
-			Schore_ += 200 * CastDieCount_++;
-			Field_.normalInky();
-			Field_.setInky();
-		}
-		else pacManDie();
+		NewSecondPoint = { secondPoint.x, secondPoint.y + secondSpeed };
+		break;
 	}
-	if (checkPosition(PacMan_, Clyde_))
+	case LEFT:
 	{
-		if (Clyde_->getMode() == CastMode::Fear)
-		{
-			Schore_ += 200 * CastDieCount_++;
-			Field_.normalClyde();
-			Field_.setClyde();
-		}
-		else pacManDie();
+		NewSecondPoint = { secondPoint.x + secondSpeed, secondPoint.y };
+		break;
 	}
+	case DOWN:
+	{
+		NewSecondPoint = { secondPoint.x, secondPoint.y - secondSpeed };
+		break;
+	}
+	case RIGHT:
+	{
+		NewSecondPoint = { secondPoint.x - secondSpeed, secondPoint.y };
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+	return	(NewFirstPoint.x == secondPoint.x && NewFirstPoint.y == secondPoint.y) ||
+			(firstPoint.x == NewSecondPoint.x && firstPoint.y == NewSecondPoint.y) ||
+			(NewFirstPoint.x == NewSecondPoint.x && NewFirstPoint.y == NewSecondPoint.y) ||
+			(firstPoint.x == secondPoint.x && firstPoint.y == secondPoint.y);
 }
 void Game::modeTimer()
 {
-	int FearTime = 10000 - Level_ * 50;
-	int FirstWaveRetreat = ((Level_ < 5) ? 7000 : 5000) + 5000;
-	int FirstWaveAttack = 20000 + FirstWaveRetreat;
-	int SecondWaveRetreat = ((Level_ < 5) ? 7000 : 5000) + FirstWaveAttack;
-	int SecondWaveAttack = 20000 + SecondWaveRetreat;
-	int ThirdWaveRetreat = 5000 + SecondWaveAttack;
-	int ThirdWaveAttack = ((Level_ < 2)? 20000 : (Level_ < 5)? 1033000 : 1037000) + ThirdWaveRetreat;
-	int FourthWaveRetreat = ((Level_ < 5) ? 5000 : 100/6) + ThirdWaveAttack;
-	EnergiserTimeOn_ = true;
+	int FearTime =getFearTime() - level_ * getFearDifferenseTime();
+	int FirstWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + getStartLate();
+	int FirstWaveAttack = getAttackTime() + FirstWaveRetreat;
+	int SecondWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + FirstWaveAttack;
+	int SecondWaveAttack = getAttackTime() + SecondWaveRetreat;
+	int ThirdWaveRetreat = getRetreatMinTime() + SecondWaveAttack;
+	int ThirdWaveAttack = ((level_ < getFirstChangeLevel())? getAttackTime() :
+		(level_ < getSecondChangeLevel())? getLongAttackTime() : getLargeAttackTime()) + ThirdWaveRetreat;
+	int FourthWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMinTime() : getSmalestRetreatTime()) + ThirdWaveAttack;
+	energiserTimeOn_ = true;
 	ULONGLONG DeltaTime = 0;
 	ULONGLONG StartTime = GetTickCount64();
-	while (Live_)
+	while (live_)
 	{
 		ULONGLONG Start = GetTickCount64();
-		CastMode Mode = Field_.getCastMode();
-		if (!Field_.BlinkyReady_) Field_.setBlinky();
-		if (!Field_.PinkyReady_ && GetTickCount64() - StartTime >= 5000) Field_.setPinky();
-		if (!Field_.InkyReady_  && CountEatenPoints_ >= 30 && GetTickCount64() - StartTime >= 7000) Field_.setInky();
-		if (!Field_.ClydeReady_ && CountEatenPoints_ >= 244/3 && GetTickCount64() - StartTime >= 9000) Field_.setClyde();
-		if (Mode == CastMode::Fear)
+		CastMode Mode = field_.getCastMode();
+		if (!field_.blinkyReady_) field_.setBlinky();
+		if (!field_.pinkyReady_ && GetTickCount64() - StartTime >= getPinkyStartTime()) field_.setPinky();
+		if (!field_.inkyReady_  && countEatenPoints_ >= getInkyPointCountCondition() &&
+			GetTickCount64() - StartTime >= getInkyStartTime()) field_.setInky();
+		if (!field_.clydeReady_ && countEatenPoints_ >= getClydePointCountCondition() &&
+			GetTickCount64() - StartTime >= getClydeStartTime()) field_.setClyde();
+		if (Mode == CastMode::FEAR)
 		{
-			if (!EnergiserTimeOn_)
+			if (!energiserTimeOn_)
 			{
-				EnergiserTimeOn_ = true;
+				energiserTimeOn_ = true;
 				StartTime += FearTime;
 			}
-			if (GetTickCount64() - EnergiserTime_ >= FearTime)
+			if (GetTickCount64() - energiserTime_ >= FearTime)
 			{
-				Field_.normalCast();
+				field_.normalCast();
 			}
 		}
 		else
 		{
-			CastMode NewCastMode = CastMode::Retreat;
-			if (GetTickCount64() - StartTime >= FourthWaveRetreat) NewCastMode = CastMode::Attack;
-			else if (GetTickCount64() - StartTime >= ThirdWaveAttack) NewCastMode = CastMode::Retreat;
-			else if (GetTickCount64() - StartTime >= ThirdWaveRetreat) NewCastMode = CastMode::Attack;
-			else if (GetTickCount64() - StartTime >= SecondWaveAttack) NewCastMode = CastMode::Retreat;
-			else if (GetTickCount64() - StartTime >= SecondWaveRetreat) NewCastMode = CastMode::Attack;
-			else if (GetTickCount64() - StartTime >= FirstWaveAttack) NewCastMode = CastMode::Retreat;
-			else if (GetTickCount64() - StartTime >= FirstWaveRetreat) NewCastMode = CastMode::Attack;
-			if (NewCastMode != Mode) Field_.changeCastMode(NewCastMode);
+			CastMode NewCastMode = CastMode::RETREAT;
+			if (GetTickCount64() - StartTime >= FourthWaveRetreat) NewCastMode = CastMode::ATTACK;
+			else if (GetTickCount64() - StartTime >= ThirdWaveAttack) NewCastMode = CastMode::RETREAT;
+			else if (GetTickCount64() - StartTime >= ThirdWaveRetreat) NewCastMode = CastMode::ATTACK;
+			else if (GetTickCount64() - StartTime >= SecondWaveAttack) NewCastMode = CastMode::RETREAT;
+			else if (GetTickCount64() - StartTime >= SecondWaveRetreat) NewCastMode = CastMode::ATTACK;
+			else if (GetTickCount64() - StartTime >= FirstWaveAttack) NewCastMode = CastMode::RETREAT;
+			else if (GetTickCount64() - StartTime >= FirstWaveRetreat) NewCastMode = CastMode::ATTACK;
+			if (NewCastMode != Mode) field_.changeCastMode(NewCastMode);
 		}
 		DeltaTime = GetTickCount64() - Start;
 	}
 }
+void Game::die()
+{
+	if (checkPosition(field_.getPacMan(), field_.getBlinky()))
+	{
+		if (field_.getBlinky().getMode() == CastMode::FEAR)
+		{
+				schore_ += getCastDieSchore() * castDieCount_ << 1;
+				field_.normalBlinky();
+				field_.setBlinky();
+		}
+		else pacManDie();
+	}
+	if (checkPosition(field_.getPacMan(), field_.getPinky()))
+	{
+		if (field_.getPinky().getMode() == CastMode::FEAR)
+		{
+			schore_ += getCastDieSchore() * castDieCount_ << 1;
+			field_.normalPinky();
+			field_.setPinky();
+		}
+		else pacManDie();
+	}
+	if (checkPosition(field_.getPacMan(), field_.getInky()))
+	{
+		if (field_.getInky().getMode() == CastMode::FEAR)
+		{
+			schore_ += getCastDieSchore() * castDieCount_ << 1;
+			field_.normalInky();
+			field_.setInky();
+		}
+		else pacManDie();
+	}
+	if (checkPosition(field_.getPacMan(), field_.getClyde()))
+	{
+		if (field_.getClyde().getMode() == CastMode::FEAR)
+		{
+			schore_ += getCastDieSchore() * castDieCount_ << 1;
+			field_.normalClyde();
+			field_.setClyde();
+		}
+		else pacManDie();
+	}
+}
+void Game::goToXY(const int x, const int y) const {
+	HANDLE hConsole;
+	COORD cursorLoc;
+	std::cout.flush();
+	cursorLoc.X = x;
+	cursorLoc.Y = y;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsole, cursorLoc);
+}
+void Game::clearConsole(const int x, const int y) const
+{
+	goToXY(0, 0);
+	std::string spase(x, ' ');
+	for (int i = 0; i < y; i++)
+	{
+		std::cout << spase << '\n';
+	}
+	goToXY(0, 0);
+}
+const bool Game::exit() const
+{
+	return ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
+}
 void Game::run()
 {
-	bool Run = true;
-	while (Run)
+	bool run = true;
+	loadLevel();
+	while (run)
 	{
-		if (Level_ < 5)
+		if (level_ < getSecondChangeLevel())
 		{
-			PacMan_->setMiddleSpeed();
-			Blinky_->setLowSpeed();
-			Pinky_->setLowSpeed();
-			Inky_->setLowSpeed();
-			Clyde_->setLowSpeed();
+			field_.setEasySpeed();
 		}
-		else if (Level_ < 21)
+		else if (level_ < getLastChangeLevel())
 		{
-			PacMan_->setHigthSpeed();
-			Blinky_->setMiddleSpeed();
-			Pinky_->setMiddleSpeed();
-			Inky_->setMiddleSpeed();
-			Clyde_->setMiddleSpeed();
+			field_.setMediumSpeed();
 		}
 		else
 		{
-			PacMan_->setMiddleSpeed();
-			Blinky_->setHigthSpeed();
-			Pinky_->setHigthSpeed();
-			Inky_->setHigthSpeed();
-			Clyde_->setHigthSpeed();
+			field_.setHardSpeed();
 		}
-		Live_ = true;
-		system("cls");
-		std::cout << "Press any key to start!";
-		_getch();
+		live_ = true;
+		clearConsole(getHorizontal(), getCountStatisticStrings());
+		std::cout << "Press 'Enter' to continue...";
+		while ((GetKeyState(getEnterKey()) & getBinaryToBool()) == 0);
+		clearConsole(getHorizontal(), 1);
 		auto future = std::async(std::launch::async, [&] {modeTimer(); });
-		system("cls");
 		std::cout << "3";
-		Sleep(1000);
+		Sleep(getOneSecond());
 		std::cout << ", 2";
-		Sleep(1000);
-		std::cout << ", 1...";
-		Sleep(1000);
-		updateStat();
-		while (Live_ && Run)
+		Sleep(getOneSecond());
+		std::cout << ", 1...\r";
+		Sleep(getOneSecond());
+		std::cout << "Level:\tLifes:\tSchore:\n";
+		while (live_ && run)
 		{
+			live_ = run = exit();
 			ULONGLONG StartTime = GetTickCount64();
 			pacManEat();
-			updateStat();
+			updateStatistic();
 			if (levelUp()) break;
 			pacManMovement();
 			castMovement();
-			Field_.moveAllDinamic();
-			Die();
+			field_.moveAllDinamic();
+			die();
 			ULONGLONG StopTime = GetTickCount64();
-			ULONGLONG Time = DeltaTime_ - (StopTime - StartTime) % DeltaTime_;
+			ULONGLONG Time = deltaTime_ - (StopTime - StartTime) % deltaTime_;
 			Sleep(Time);
 		}
-		if (!Live_) 
+		if (!live_) 
 		{
-			if (Lifes_-- <= 0) Run = false;
+			if (lifes_-- <= 0)
+			{
+				run = false;
+				system("cls");
+				std::cout << "Game Over!\nYour Schore:" << schore_ << "\nPress 'Esc' to exit";
+				while ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
+			}
 			else
 			{
-				Field_.BlinkyReady_ = Field_.PinkyReady_ = Field_.InkyReady_ = Field_.ClydeReady_ = false;
+				field_.blinkyReady_ = field_.pinkyReady_ = field_.inkyReady_ = field_.clydeReady_ = false;
 			}
 		}
 		else
 		{
-			Live_ = false;
-			Field_.normalCast();
-			Field_.resetLevel();
-			Field_.BlinkyReady_ = Field_.PinkyReady_ = Field_.InkyReady_ = Field_.ClydeReady_ = false;
+			live_ = false;
+			field_.normalCast();
+			field_.resetLevel();
+			field_.blinkyReady_ = field_.pinkyReady_ = field_.inkyReady_ = field_.clydeReady_ = false;
 		}
 
 	}
-}
-void Game::stop() 
-{
-	system("cls");
-	std::cout << "Game Over!\nYour Schore:" << Schore_;
-	Sleep(3000);
-	_getch();
-	Field_.clear();
 }

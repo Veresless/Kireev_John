@@ -1,36 +1,36 @@
-#pragma once
+#ifndef H_GAME
+#define H_GAME
+
 #include "Field.h"
 
 class Game {
+public:
+	Game();
+	void run();
 private:
-	int Schore_, Lifes_, Level_;
-	ULONGLONG DeltaTime_;
-	unsigned long long EnergiserTime_;
-	bool EnergiserTimeOn_;
-	short CastDieCount_;
-	int CountEatenPoints_;
-	bool Live_;
-	Field Field_;
-	PacMan* PacMan_;
-	Blinky* Blinky_;
-	Pinky* Pinky_;
-	Inky* Inky_;
-	Clyde* Clyde_;
-	inline bool checkPosition(PacMan* PacMan, Cast* Cast);
+	int schore_;
+	int lifes_;
+	int level_;
+	ULONGLONG deltaTime_;
+	unsigned long long energiserTime_;
+	bool energiserTimeOn_;
+	short castDieCount_;
+	int countEatenPoints_;
+	bool live_;
+	Field field_;
+	void goToXY(const int x, const int y) const;
+	void clearConsole(const int x, const int y) const;
+	const bool exit() const;
+	const bool checkPosition(const PacMan& PacMan, const Cast& Cast)const;
 	void setStartParams();
-	void updateStat();
+	void updateStatistic()const;
 	void pacManMovement();
 	void castMovement();
 	void pacManEat();
 	void pacManDie();
-	void Die();
+	void die();
 	void modeTimer();
 	void loadLevel();
-	void pause();
-	inline bool levelUp();
-public:
-	Game();
-	void start();
-	void run();
-	void stop();
+	const bool levelUp();
 };
+#endif
