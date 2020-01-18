@@ -6,7 +6,7 @@
 class Game {
 public:
 	Game();
-	void run();
+	const int run();
 private:
 	void goToXY(const int x, const int y) const;
 	void clearConsole(const int x, const int y) const;

@@ -283,7 +283,7 @@ const bool Game::exit() const
 {
 	return ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
 }
-void Game::run()
+const int Game::run()
 {
 	bool run = true;
 	loadLevel();
@@ -334,9 +334,6 @@ void Game::run()
 			if (lifes_-- <= 0)
 			{
 				run = false;
-				system("cls");
-				std::cout << "Game Over!\nYour Schore:" << schore_ << "\nPress 'Esc' to exit";
-				while ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
 			}
 			else
 			{
@@ -352,4 +349,5 @@ void Game::run()
 		}
 
 	}
+	return schore_;
 }

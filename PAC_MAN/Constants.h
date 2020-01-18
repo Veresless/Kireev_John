@@ -157,6 +157,10 @@ inline const int getEscKey()
 {
 	return 27;
 }
+inline const int getTabKey()
+{
+	return 9;
+}
 inline const int getFearTime()
 {
 	return 10000;
@@ -248,6 +252,14 @@ inline const POINT getThirdSpecialPoint()
 inline const POINT getFourthSpecialPoint()
 {
 	return {15 , 26};
+}
+inline const char* getPath()
+{
+	return "SchoreList.txt";
+}
+inline const int getDelay()
+{
+	return 500;
 }
 #endif
 
