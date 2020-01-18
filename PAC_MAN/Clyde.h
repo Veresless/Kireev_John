@@ -6,8 +6,11 @@
 class Clyde : public Gost
 {
 public:
-	virtual void setStartPosition() override;
-	virtual void setDirectionPoint(const POINT Point, const Direction direction, const POINT blinky) override;
 	Clyde();
+	virtual void setStartPosition() override;
+	virtual void setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky) override;
+private:
+	Clyde(Clyde const& clyde);
+	Clyde(Clyde const&& clyde);
 };
 #endif

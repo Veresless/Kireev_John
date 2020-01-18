@@ -5,28 +5,30 @@
 
 #include "DinamicSprite.h"
 
-
-
 class Gost : public DinamicSprite
 {
 public:
-	Gost();
+	Gost(COLORREF mainColor, COLORREF fearColor, const POINT& retreatPoint);
 	inline const GostMode getMode() const;
-	virtual void setType(const SpriteType type) override;
+	void setFear(const bool fear);
 	void setReadyPosition();
 	void choiseDirection(bool ways[4]);
-	virtual void setDirectionPoint(const POINT Point, const Direction direction, const POINT Blinky) = 0;
+	virtual void setDirectionPoint(const POINT& Point, const Direction direction, const POINT& Blinky) = 0;
 	void setMode(const GostMode mode);
-	static Gost* createGost(const GostType type);
-	virtual void setMainColor(const COLORREF color)override;
+	void updateSample();
+	static std::shared_ptr<Gost> createGost(const GostType type);
 protected:
-	GostMode mode_;
-	POINT retreatPoint_;
-	POINT directionPoint_;
-	const int distanse (const POINT position, const POINT directionPoint);
+	const int distanse (const POINT& position, const POINT& directionPoint);
+	virtual void initializeSample(const bool sample[]) override;
 private:
-	const POINT getPoint(const Direction direction);
-	void decision(std::vector<Direction>& directions, const POINT directionPoint);
+	const POINT getPoint(const Direction direction) const;
+	void decision(const std::vector<Direction>& directions, const POINT& directionPoint);
+protected:
+	bool fear_;
+	GostMode mode_;
+	const COLORREF fearColor_;
+	const POINT retreatPoint_;
+	POINT directionPoint_;
 };
 inline const GostMode Gost::getMode() const
 {

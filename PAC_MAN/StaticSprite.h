@@ -6,21 +6,20 @@
 class StaticSprite : public ISprite
 {
 public:
-	StaticSprite();
+	StaticSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]);
 	inline const SpriteType getType() const override;
-	virtual void setType(const SpriteType type) override;
-	void printOn(int x, int y, HDC hdc);
-	virtual void initializeSample(const bool sample[]) override;
-	static StaticSprite* createSprite(const SpriteType type);
-	void setMainColor(const COLORREF color);
-	~StaticSprite();
+	void printOn(const int x, const int y, const HDC hdc) const;
+	const static std::shared_ptr<StaticSprite> const createSprite(const SpriteType type, const bool sample[]);
 protected:
-	virtual void createSample() override;
+	virtual void initializeSample(const bool sample[]) override;
+private:
+	StaticSprite(StaticSprite const& sprite);
+	StaticSprite(StaticSprite const&& sprite);
 protected:
 	const int size_;
-	SpriteType type_;
-	COLORREF** sample_;
-	COLORREF mainColor_;
+	const SpriteType type_;
+	COLOR_MATRIX sample_;
+	const COLORREF mainColor_;
 	const COLORREF backgroundColor_;
 };
 inline const SpriteType StaticSprite::getType() const

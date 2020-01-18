@@ -1,9 +1,15 @@
 #include "DinamicSprite.h"
 #include "Constants.h"
 
-DinamicSprite::DinamicSprite() : size_(getSize()), backgroundColor_(getBackgroundColor())
+DinamicSprite::DinamicSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]) : 
+	size_(getSize()), type_(type), mainColor_(mainColor), backgroundColor_(getBackgroundColor())
 {
-	createSample();
+	sample_ = std::unique_ptr<std::unique_ptr<COLORREF[]>[]>(new std::unique_ptr<COLORREF[]>[size_]);
+	for (int i = 0; i < size_; i++)
+	{
+		sample_[i] = std::unique_ptr<COLORREF[]>(new COLORREF[size_]);
+	}
+	initializeSample(sample);
 }
 void DinamicSprite::setDirection(const Direction direction)
 {
@@ -72,27 +78,5 @@ const void DinamicSprite::print(const HDC hdc) const
 			const int Y = (i + point_.y + HIGTH) % HIGTH;
 			SetPixel(hdc, X, Y, sample_[i][j]);
 		}
-	}
-}
-void DinamicSprite::createSample()
-{
-	sample_ = new COLORREF * [size_];
-	for (int i = 0; i < size_; i++)
-	{
-		sample_[i] = new COLORREF[size_];
-	}
-}
-DinamicSprite::~DinamicSprite()
-{
-	if (sample_ != nullptr)
-	{
-		for (int i = 0; i < size_; i++)
-		{
-			if (sample_[i] != nullptr)
-			{
-				delete[] sample_[i];
-			}
-		}
-		delete[] sample_;
 	}
 }

@@ -5,17 +5,15 @@
 #include "Gost.h"
 #include "PacMan.h"
 
+typedef std::unique_ptr<std::unique_ptr<std::shared_ptr<StaticSprite>[]>[]> SPRITE_MATRIX;
+
 class Field 
 {
 public:
-	inline const PacMan* getPacMan() const;
-	inline const Gost* getBlinky() const;
-	inline const Gost* getPinky() const;
-	inline const Gost* getInky() const;
-	inline const Gost* getClyde() const;
 	Field();
-	~Field();
-	void fearCast();
+	inline const std::shared_ptr<PacMan> const getPacMan() const;
+	const std::shared_ptr<Gost> const getGost(const GostType type) const;
+	void fearGost();
 	void normalCast();
 	void normalBlinky();
 	void normalPinky();
@@ -36,60 +34,43 @@ public:
 	void setMediumSpeed();
 	void setHardSpeed();
 	void castMovement();
-	void turnDinamic(DinamicSprite* sprite, const Direction direction);
-	void turnPacMan(Direction const direction);
+	void turnPacMan(const Direction direction);
 	void moveAllDinamic();
 public:
-	bool blinkyReady_;
-	bool pinkyReady_;
-	bool inkyReady_;
-	bool clydeReady_;
+	bool blinkyReady;
+	bool pinkyReady;
+	bool inkyReady;
+	bool clydeReady;
 private:
 	void setSprites();
 	void setStart();
-	const bool isEmpty(const POINT position, const Direction direction);
-	void moveDinamic(DinamicSprite* sprite, const POINT position, const Direction direction);
-	void eraseDinamic(const POINT Position);
+	const bool isEmpty(const POINT& position, const Direction direction);
+	void moveDinamic(std::shared_ptr<DinamicSprite> sprite, const POINT& position, const Direction direction);
+	void eraseDinamic(const POINT& Position);
 	bool checkSpecial(const int x, const int y);
 private:
 	HDC hdc_;
 	HWND hwnd_;
 	GostMode mode_;
-	StaticSprite* empty_;
-	StaticSprite* wallVertical_;
-	StaticSprite* wallHorizontal_;
-	StaticSprite* wallLeftBottom_;
-	StaticSprite* wallRightBottom_;
-	StaticSprite* wallLeftTop_;
-	StaticSprite* wallRightTop_;
-	StaticSprite* door_;
-	PacMan pacMan_;
-	Gost* blinky_;
-	Gost* pinky_;
-	Gost* inky_;
-	Gost* clyde_;
-	StaticSprite* schorePoint_;
-	StaticSprite* energiser_;
-	StaticSprite*** level_;
+	std::shared_ptr<StaticSprite> empty_;
+	std::shared_ptr<StaticSprite> wallVertical_;
+	std::shared_ptr<StaticSprite> wallHorizontal_;
+	std::shared_ptr<StaticSprite> wallLeftBottom_;
+	std::shared_ptr<StaticSprite> wallRightBottom_;
+	std::shared_ptr<StaticSprite> wallLeftTop_;
+	std::shared_ptr<StaticSprite> wallRightTop_;
+	std::shared_ptr<StaticSprite> door_;
+	std::shared_ptr<PacMan> pacMan_;
+	std::shared_ptr<Gost> blinky_;
+	std::shared_ptr<Gost> pinky_;
+	std::shared_ptr<Gost> inky_;
+	std::shared_ptr<Gost> clyde_;
+	std::shared_ptr<StaticSprite> schorePoint_;
+	std::shared_ptr<StaticSprite> energiser_;
+	SPRITE_MATRIX level_;
 };
-inline const PacMan* Field::getPacMan() const
+inline const std::shared_ptr<PacMan> const Field::getPacMan() const
 {
-	return &pacMan_;
-}
-inline const Gost* Field::getBlinky() const
-{
-	return blinky_;
-}
-inline const Gost* Field::getPinky() const
-{
-	return pinky_;
-}
-inline const Gost* Field::getInky() const
-{
-	return inky_;
-}
-inline const Gost* Field::getClyde() const
-{
-	return clyde_;
+	return pacMan_;
 }
 #endif

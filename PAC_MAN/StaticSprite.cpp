@@ -1,15 +1,17 @@
 #include "StaticSprite.h"
 #include "Constants.h"
 
-StaticSprite::StaticSprite() :size_(getSize()), mainColor_(getBackgroundColor()), backgroundColor_(getBackgroundColor())
+StaticSprite::StaticSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]) :
+	size_(getSize()), type_(type), mainColor_(mainColor), backgroundColor_(getBackgroundColor())
 {
-	createSample();
+	sample_ = std::unique_ptr<std::unique_ptr<COLORREF[]>[]>(new std::unique_ptr<COLORREF[]>[size_]);
+	for (int i = 0; i < size_; i++)
+	{
+		sample_[i] = std::unique_ptr<COLORREF[]>(new COLORREF[size_]);
+	}
+	initializeSample(sample);
 }
-void StaticSprite::setType(SpriteType type)
-{
-	type_ = type;
-}
-void StaticSprite::printOn(int x, int y, HDC hdc)
+void StaticSprite::printOn(const int x, const int y, const HDC hdc) const
 {
 	const int xStart = size_ * x;
 	const int yStart = size_ * y;
@@ -21,10 +23,6 @@ void StaticSprite::printOn(int x, int y, HDC hdc)
 		}
 	}
 }
-void StaticSprite::setMainColor(const COLORREF color)
-{
-	mainColor_ = color;
-}
 void StaticSprite::initializeSample(const bool sample[])
 {
 	for (int i = 0; i < size_; i++)
@@ -35,32 +33,22 @@ void StaticSprite::initializeSample(const bool sample[])
 		}
 	}
 }
-void StaticSprite::createSample()
+const std::shared_ptr<StaticSprite> const StaticSprite::createSprite(const SpriteType type, const bool sample[])
 {
-	sample_ = new COLORREF * [size_];
-	for (int i = 0; i < size_; i++)
+	COLORREF mainColor;
+	switch (type)
 	{
-		sample_[i] = new COLORREF[size_];
-	}
-}
-StaticSprite* StaticSprite::createSprite(const SpriteType type)
-{
-	StaticSprite* sprite = new StaticSprite();
-	sprite->setType(type);
-	return sprite;
-}
-StaticSprite::~StaticSprite()
-{
-	if (sample_ != nullptr)
+	case WALL:
 	{
-		for (int i = 0; i < size_; i++)
-		{
-			if (sample_[i] != nullptr)
-			{
-				delete[] sample_[i];
-			}
-		}
-		delete[] sample_;
+		mainColor = getBlue();
+		break;
 	}
+	default:
+	{
+		mainColor = getWhite();
+		break;
+	}
+	}
+	return std::shared_ptr<StaticSprite>(new StaticSprite(type, mainColor, sample));
 }
 

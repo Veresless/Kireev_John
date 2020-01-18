@@ -77,7 +77,7 @@ void Game::pacManEat()
 			{
 				energiserTime_ = GetTickCount64();
 				energiserTimeOn_ = false;
-				field_.fearCast();
+				field_.fearGost();
 				castDieCount_ = 1;
 			}
 			field_.setEmptyAt(position.x / size, position.y / size);
@@ -91,36 +91,36 @@ void Game::pacManDie()
 	field_.normalCast();
 	field_.resetDinamic();
 }
-const bool Game::checkPosition(const PacMan* pacMan, const Gost* cast) const
+const bool Game::checkPosition(const std::shared_ptr<PacMan> const pacMan, const std::shared_ptr<Gost> const gost) const
 {
 	POINT firstPoint = pacMan->getPosition();
 	Direction firstDirection = pacMan->getDirection();
 	int firstSpeed = pacMan->getSpeed();
-	POINT secondPoint = cast->getPosition();
-	Direction secondDirection = cast->getDirection();
-	int secondSpeed = cast->getSpeed();
-	POINT NewFirstPoint = { firstPoint.x, firstPoint.y };
-	POINT NewSecondPoint = { secondPoint.x, secondPoint.y };
+	POINT secondPoint = gost->getPosition();
+	Direction secondDirection = gost->getDirection();
+	int secondSpeed = gost->getSpeed();
+	POINT newFirstPoint = { firstPoint.x, firstPoint.y };
+	POINT newSecondPoint = { secondPoint.x, secondPoint.y };
 	switch (firstDirection)
 	{
 	case UP:
 	{
-		NewFirstPoint = { firstPoint.x, firstPoint.y + firstSpeed };
+		newFirstPoint = { firstPoint.x, firstPoint.y + firstSpeed };
 		break;
 	}
 	case LEFT:
 	{
-		NewFirstPoint = { firstPoint.x + firstSpeed, firstPoint.y };
+		newFirstPoint = { firstPoint.x + firstSpeed, firstPoint.y };
 		break;
 	}
 	case DOWN:
 	{
-		NewFirstPoint = { firstPoint.x, firstPoint.y - firstSpeed };
+		newFirstPoint = { firstPoint.x, firstPoint.y - firstSpeed };
 		break;
 	}
 	case RIGHT:
 	{
-		NewFirstPoint = { firstPoint.x - firstSpeed, firstPoint.y };
+		newFirstPoint = { firstPoint.x - firstSpeed, firstPoint.y };
 		break;
 	}
 	default:
@@ -132,22 +132,22 @@ const bool Game::checkPosition(const PacMan* pacMan, const Gost* cast) const
 	{
 	case UP:
 	{
-		NewSecondPoint = { secondPoint.x, secondPoint.y + secondSpeed };
+		newSecondPoint = { secondPoint.x, secondPoint.y + secondSpeed };
 		break;
 	}
 	case LEFT:
 	{
-		NewSecondPoint = { secondPoint.x + secondSpeed, secondPoint.y };
+		newSecondPoint = { secondPoint.x + secondSpeed, secondPoint.y };
 		break;
 	}
 	case DOWN:
 	{
-		NewSecondPoint = { secondPoint.x, secondPoint.y - secondSpeed };
+		newSecondPoint = { secondPoint.x, secondPoint.y - secondSpeed };
 		break;
 	}
 	case RIGHT:
 	{
-		NewSecondPoint = { secondPoint.x - secondSpeed, secondPoint.y };
+		newSecondPoint = { secondPoint.x - secondSpeed, secondPoint.y };
 		break;
 	}
 	default:
@@ -155,43 +155,43 @@ const bool Game::checkPosition(const PacMan* pacMan, const Gost* cast) const
 		break;
 	}
 	}
-	return	(NewFirstPoint.x == secondPoint.x && NewFirstPoint.y == secondPoint.y) ||
-			(firstPoint.x == NewSecondPoint.x && firstPoint.y == NewSecondPoint.y) ||
-			(NewFirstPoint.x == NewSecondPoint.x && NewFirstPoint.y == NewSecondPoint.y) ||
+	return	(newFirstPoint.x == secondPoint.x && newFirstPoint.y == secondPoint.y) ||
+			(firstPoint.x == newSecondPoint.x && firstPoint.y == newSecondPoint.y) ||
+			(newFirstPoint.x == newSecondPoint.x && newFirstPoint.y == newSecondPoint.y) ||
 			(firstPoint.x == secondPoint.x && firstPoint.y == secondPoint.y);
 }
 void Game::modeTimer()
 {
-	int FearTime =getFearTime() - level_ * getFearDifferenseTime();
-	int FirstWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + getStartLate();
-	int FirstWaveAttack = getAttackTime() + FirstWaveRetreat;
-	int SecondWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + FirstWaveAttack;
-	int SecondWaveAttack = getAttackTime() + SecondWaveRetreat;
-	int ThirdWaveRetreat = getRetreatMinTime() + SecondWaveAttack;
-	int ThirdWaveAttack = ((level_ < getFirstChangeLevel())? getAttackTime() :
-		(level_ < getSecondChangeLevel())? getLongAttackTime() : getLargeAttackTime()) + ThirdWaveRetreat;
-	int FourthWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMinTime() : getSmalestRetreatTime()) + ThirdWaveAttack;
+	int fearTime =getFearTime() - level_ * getFearDifferenseTime();
+	int firstWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + getStartLate();
+	int firstWaveAttack = getAttackTime() + firstWaveRetreat;
+	int secondWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + firstWaveAttack;
+	int secondWaveAttack = getAttackTime() + secondWaveRetreat;
+	int thirdWaveRetreat = getRetreatMinTime() + secondWaveAttack;
+	int thirdWaveAttack = ((level_ < getFirstChangeLevel())? getAttackTime() :
+		(level_ < getSecondChangeLevel())? getLongAttackTime() : getLargeAttackTime()) + thirdWaveRetreat;
+	int fourthWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMinTime() : getSmalestRetreatTime()) + thirdWaveAttack;
 	energiserTimeOn_ = true;
-	ULONGLONG DeltaTime = 0;
-	ULONGLONG StartTime = GetTickCount64();
+	ULONGLONG deltaTime = 0;
+	ULONGLONG startTime = GetTickCount64();
 	while (live_)
 	{
-		ULONGLONG Start = GetTickCount64();
-		GostMode Mode = field_.getCastMode();
-		if (!field_.blinkyReady_) field_.setBlinky();
-		if (!field_.pinkyReady_ && GetTickCount64() - StartTime >= getPinkyStartTime()) field_.setPinky();
-		if (!field_.inkyReady_  && countEatenPoints_ >= getInkyPointCountCondition() &&
-			GetTickCount64() - StartTime >= getInkyStartTime()) field_.setInky();
-		if (!field_.clydeReady_ && countEatenPoints_ >= getClydePointCountCondition() &&
-			GetTickCount64() - StartTime >= getClydeStartTime()) field_.setClyde();
-		if (Mode == GostMode::FEAR)
+		ULONGLONG start = GetTickCount64();
+		GostMode mode = field_.getCastMode();
+		if (!field_.blinkyReady) field_.setBlinky();
+		if (!field_.pinkyReady && GetTickCount64() - startTime >= getPinkyStartTime()) field_.setPinky();
+		if (!field_.inkyReady && countEatenPoints_ >= getInkyPointCountCondition() &&
+			GetTickCount64() - startTime >= getInkyStartTime()) field_.setInky();
+		if (!field_.clydeReady && countEatenPoints_ >= getClydePointCountCondition() &&
+			GetTickCount64() - startTime >= getClydeStartTime()) field_.setClyde();
+		if (mode == GostMode::FEAR)
 		{
 			if (!energiserTimeOn_)
 			{
 				energiserTimeOn_ = true;
-				StartTime += FearTime;
+				startTime += fearTime;
 			}
-			if (GetTickCount64() - energiserTime_ >= FearTime)
+			if (GetTickCount64() - energiserTime_ >= fearTime)
 			{
 				field_.normalCast();
 			}
@@ -199,23 +199,29 @@ void Game::modeTimer()
 		else
 		{
 			GostMode NewCastMode = GostMode::RETREAT;
-			if (GetTickCount64() - StartTime >= FourthWaveRetreat) NewCastMode = GostMode::ATTACK;
-			else if (GetTickCount64() - StartTime >= ThirdWaveAttack) NewCastMode = GostMode::RETREAT;
-			else if (GetTickCount64() - StartTime >= ThirdWaveRetreat) NewCastMode = GostMode::ATTACK;
-			else if (GetTickCount64() - StartTime >= SecondWaveAttack) NewCastMode = GostMode::RETREAT;
-			else if (GetTickCount64() - StartTime >= SecondWaveRetreat) NewCastMode = GostMode::ATTACK;
-			else if (GetTickCount64() - StartTime >= FirstWaveAttack) NewCastMode = GostMode::RETREAT;
-			else if (GetTickCount64() - StartTime >= FirstWaveRetreat) NewCastMode = GostMode::ATTACK;
-			if (NewCastMode != Mode) field_.changeCastMode(NewCastMode);
+			if (GetTickCount64() - startTime >= fourthWaveRetreat) NewCastMode = GostMode::ATTACK;
+			else if (GetTickCount64() - startTime >= thirdWaveAttack) NewCastMode = GostMode::RETREAT;
+			else if (GetTickCount64() - startTime >= thirdWaveRetreat) NewCastMode = GostMode::ATTACK;
+			else if (GetTickCount64() - startTime >= secondWaveAttack) NewCastMode = GostMode::RETREAT;
+			else if (GetTickCount64() - startTime >= secondWaveRetreat) NewCastMode = GostMode::ATTACK;
+			else if (GetTickCount64() - startTime >= firstWaveAttack) NewCastMode = GostMode::RETREAT;
+			else if (GetTickCount64() - startTime >= firstWaveRetreat) NewCastMode = GostMode::ATTACK;
+			if (NewCastMode != mode) field_.changeCastMode(NewCastMode);
 		}
-		DeltaTime = GetTickCount64() - Start;
+		deltaTime = GetTickCount64() - start;
 	}
 }
 void Game::die()
 {
-	if (checkPosition(field_.getPacMan(), field_.getBlinky()))
+	std::shared_ptr<PacMan> pacMan = field_.getPacMan();
+	std::shared_ptr<Gost> blinky = field_.getGost(GostType::BLINKY);
+	std::shared_ptr<Gost> pinky = field_.getGost(GostType::PINKY);
+	std::shared_ptr<Gost> inky = field_.getGost(GostType::INKY);
+	std::shared_ptr<Gost> clyde = field_.getGost(GostType::CLYDE);
+
+	if (checkPosition(pacMan, blinky))
 	{
-		if (field_.getBlinky()->getMode() == GostMode::FEAR)
+		if (blinky->getMode() == GostMode::FEAR)
 		{
 				schore_ += getCastDieSchore() * castDieCount_ << 1;
 				field_.normalBlinky();
@@ -223,9 +229,9 @@ void Game::die()
 		}
 		else pacManDie();
 	}
-	if (checkPosition(field_.getPacMan(), field_.getPinky()))
+	if (checkPosition(pacMan, pinky))
 	{
-		if (field_.getPinky()->getMode() == GostMode::FEAR)
+		if (pinky->getMode() == GostMode::FEAR)
 		{
 			schore_ += getCastDieSchore() * castDieCount_ << 1;
 			field_.normalPinky();
@@ -233,9 +239,9 @@ void Game::die()
 		}
 		else pacManDie();
 	}
-	if (checkPosition(field_.getPacMan(), field_.getInky()))
+	if (checkPosition(pacMan, inky))
 	{
-		if (field_.getInky()->getMode() == GostMode::FEAR)
+		if (inky->getMode() == GostMode::FEAR)
 		{
 			schore_ += getCastDieSchore() * castDieCount_ << 1;
 			field_.normalInky();
@@ -243,9 +249,9 @@ void Game::die()
 		}
 		else pacManDie();
 	}
-	if (checkPosition(field_.getPacMan(), field_.getClyde()))
+	if (checkPosition(pacMan, clyde))
 	{
-		if (field_.getClyde()->getMode() == GostMode::FEAR)
+		if (clyde->getMode() == GostMode::FEAR)
 		{
 			schore_ += getCastDieSchore() * castDieCount_ << 1;
 			field_.normalClyde();
@@ -334,7 +340,7 @@ void Game::run()
 			}
 			else
 			{
-				field_.blinkyReady_ = field_.pinkyReady_ = field_.inkyReady_ = field_.clydeReady_ = false;
+				field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
 			}
 		}
 		else
@@ -342,7 +348,7 @@ void Game::run()
 			live_ = false;
 			field_.normalCast();
 			field_.resetLevel();
-			field_.blinkyReady_ = field_.pinkyReady_ = field_.inkyReady_ = field_.clydeReady_ = false;
+			field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
 		}
 
 	}

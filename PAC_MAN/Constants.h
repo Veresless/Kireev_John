@@ -1,38 +1,7 @@
 #ifndef H_CONSTANTS
 #define H_CONSTANTS
+
 #include <windows.h>
-
-enum SpriteType
-{
-	WALL,
-	SCHORE_POINT,
-	ENERGISER,
-	EMPTY,
-	PACMAN,
-	GOST
-};
-enum GostMode
-{
-	ATTACK,
-	RETREAT,
-	FEAR
-};
-enum GostType
-{
-	BLINKY,
-	PINKY,
-	INKY,
-	CLYDE
-};
-
-enum Direction
-{
-	UP,
-	LEFT,
-	DOWN,
-	RIGHT
-};
-
 
 inline const int getHorizontal() 
 {
@@ -46,44 +15,7 @@ inline const int getSize()
 {
 	 return 8;
 }
-inline const COLORREF getBackgroundColor()
-{
-	return RGB(0, 0, 0);
-}
-inline const COLORREF getBlue()
-{
-	return RGB(0, 0, 255);
-}
 
-inline const COLORREF getOrange()
-{
-	return RGB(255, 100, 0);
-}
-
-inline const COLORREF getCayan()
-{
-	return RGB(0, 255, 255);
-}
-
-inline const COLORREF getPink()
-{
-	return RGB(255, 190, 200);
-}
-
-inline const COLORREF getRed()
-{
-	return RGB(255, 0, 0);
-}
-
-inline const COLORREF getYellow()
-{
-	return RGB(255, 255, 0);
-}
-
-inline const COLORREF getWhite()
-{
-	return RGB(255, 255, 255);
-}
 inline const int getLowSpeed()
 {
 	return 1;
@@ -98,38 +30,23 @@ inline const int getHighSpeed()
 }
 inline const POINT getCastReadyPosition()
 {
-	POINT point;
-	point.x = 13 * getSize() + getSize() / 2;
-	point.y = 14 * getSize();
-	return point;
+	return { 13 * getSize() + getSize() / 2, 14 * getSize() };
 }
 inline const POINT getBlinkyStartPosition()
 {
-	POINT point;
-	point.x = 13 * getSize() + getSize() / 2;
-	point.y = 14 * getSize();
-	return point;
+	return { 13 * getSize() + getSize() / 2, 14 * getSize() };
 }
 inline const POINT getPinkyStartPosition()
 {
-	POINT point;
-	point.x = 13 * getSize() + getSize() / 2;
-	point.y = 17 * getSize();
-	return point;
+	return { 13 * getSize() + getSize() / 2, 17 * getSize() };
 }
 inline const POINT getInkyStartPosition()
 {
-	POINT point;
-	point.x = 11 * getSize() + getSize() / 2;
-	point.y = 17 * getSize();
-	return point;
+	return { 11 * getSize() + getSize() / 2, 17 * getSize() };
 }
 inline const POINT getClydeStartPosition()
 {
-	POINT point;
-	point.x = 15 * getSize() + getSize() / 2;
-	point.y = 17 * getSize();
-	return point;
+	return { 15 * getSize() + getSize() / 2, 17 * getSize() };
 }
 inline const int getPinkyDistanse()
 {
@@ -141,38 +58,24 @@ inline const int getClydeDistanse()
 }
 inline const POINT getBlinkyRetreatPoint()
 {
-	POINT point;
-	point.x = 25 * getSize();
-	point.y = 0;
-	return point;
+	return { 25 * getSize(), 0 };
 }
 inline const POINT getPinkyRetreatPoint()
 {
-	POINT point;
-	point.x = 2 * getSize();
-	point.y = 0;
-	return point;
+	return { 2 * getSize(), 0 };
 }
 inline const POINT getInkyRetreatPoint()
 {
-	POINT point;
-	point.x = 27 * getSize();
-	point.y = 35 * getSize();
-	return point;
+	return { 27 * getSize(), 35 * getSize() };
 }
 inline const POINT getClydeRetreatPoint()
 {
-	POINT point;
-	point.x = 0;
-	point.y = 35 * getSize();
-	return point;
+	return { 0, 35 * getSize() };
 }
 inline const POINT getPacManStartPosition()
 {
-	POINT point;
-	point.x = 13 * getSize() + getSize() / 2;
-	point.y = 26 * getSize();
-	return point;
+
+	return { 13 * getSize() + getSize() / 2, 26 * getSize() };
 }
 inline const int getCountDirections()
 {

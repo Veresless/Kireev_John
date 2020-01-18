@@ -5,12 +5,11 @@ void Inky::setStartPosition()
 {
 	point_ = getInkyStartPosition();
 }
-Inky::Inky()
+Inky::Inky() : Gost(getCayan(), getBlue(), getInkyRetreatPoint())
 {
 	setStartPosition();
-	retreatPoint_ = getInkyRetreatPoint();
 }
-void Inky::setDirectionPoint(const POINT point, const Direction direction, const POINT blinky)
+void Inky::setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky)
 {
 	const int count = 2;
 	switch (direction)

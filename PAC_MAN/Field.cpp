@@ -2,48 +2,24 @@
 #include <string>
 
 #include "Field.h"
-#include "MapConstants.h"
-#include "StaticSprite.h"
-#include "Gost.h"
-#include "Constants.h"
 
 void Field::setSprites()
 {
-	empty_ = StaticSprite::createSprite(SpriteType::EMPTY);
-	wallVertical_ = StaticSprite::createSprite(SpriteType::WALL);
-	wallHorizontal_ = StaticSprite::createSprite(SpriteType::WALL);
-	wallLeftBottom_ = StaticSprite::createSprite(SpriteType::WALL);
-	wallRightBottom_ = StaticSprite::createSprite(SpriteType::WALL);
-	wallLeftTop_ = StaticSprite::createSprite(SpriteType::WALL);
-	wallRightTop_ = StaticSprite::createSprite(SpriteType::WALL);
-	door_ = StaticSprite::createSprite(SpriteType::WALL);
+	empty_ = StaticSprite::createSprite(SpriteType::EMPTY, SPRITE_EMPTY);
+	wallVertical_ = StaticSprite::createSprite(SpriteType::WALL, WALL_VERTICAL);
+	wallHorizontal_ = StaticSprite::createSprite(SpriteType::WALL, WALL_HORIZONTAL);
+	wallLeftBottom_ = StaticSprite::createSprite(SpriteType::WALL, WALL_LEFT_BOTTOM);
+	wallRightBottom_ = StaticSprite::createSprite(SpriteType::WALL, WALL_RIGHT_BOTTOM);
+	wallLeftTop_ = StaticSprite::createSprite(SpriteType::WALL, WALL_LEFT_TOP);
+	wallRightTop_ = StaticSprite::createSprite(SpriteType::WALL, WALL_RIGHT_TOP);
+	door_ = StaticSprite::createSprite(SpriteType::WALL, WALL_HORIZONTAL);
 	blinky_ = Gost::createGost(GostType::BLINKY);
 	pinky_ = Gost::createGost(GostType::PINKY);
 	inky_ = Gost::createGost(GostType::INKY);
 	clyde_ = Gost::createGost(GostType::CLYDE);
-	schorePoint_ = StaticSprite::createSprite(SpriteType::SCHORE_POINT);
-	energiser_ = StaticSprite::createSprite(SpriteType::ENERGISER);
-	empty_->setMainColor(getBlue());
-	empty_->initializeSample(SPRITE_EMPTY);
-	wallVertical_->setMainColor(getBlue());
-	wallVertical_->initializeSample(WALL_VERTICAL);
-	wallHorizontal_->setMainColor(getBlue());
-	wallHorizontal_->initializeSample(WALL_HORIZONTAL);
-	wallLeftBottom_->setMainColor(getBlue());
-	wallLeftBottom_->initializeSample(WALL_LEFT_BOTTOM);
-	wallRightBottom_->setMainColor(getBlue());
-	wallRightBottom_->initializeSample(WALL_RIGHT_BOTTOM);
-	wallLeftTop_->setMainColor(getBlue());
-	wallLeftTop_->initializeSample(WALL_LEFT_TOP);
-	wallRightTop_->setMainColor(getBlue());
-	wallRightTop_->initializeSample(WALL_RIGHT_TOP);
-	door_->setMainColor(getRed());
-	door_->initializeSample(WALL_HORIZONTAL);
-	normalCast();
-	schorePoint_->setMainColor(getWhite());
-	schorePoint_->initializeSample(SPRITE_SCHORE_POINT);
-	energiser_->setMainColor(getWhite());
-	energiser_->initializeSample(SPRITE_ENERGISER);
+	schorePoint_ = StaticSprite::createSprite(SpriteType::SCHORE_POINT, SPRITE_SCHORE_POINT);
+	energiser_ = StaticSprite::createSprite(SpriteType::ENERGISER, SPRITE_ENERGISER);
+	pacMan_ = std::make_shared<PacMan>();
 }
 void Field::normalCast()
 {
@@ -55,45 +31,76 @@ void Field::normalCast()
 }
 void Field::normalBlinky()
 {
-	blinky_->setMainColor(getRed());
-	blinky_->initializeSample(SPRITE_GOST);
+	blinky_->setFear(false);
+	blinky_->updateSample();
 	blinky_->setMode(GostMode::ATTACK);
 }
 void Field::normalPinky()
 {
-	pinky_->setMainColor(getPink());
-	pinky_->initializeSample(SPRITE_GOST);
+	pinky_->setFear(false);
+	pinky_->updateSample();
 	pinky_->setMode(GostMode::ATTACK);
 }
 void Field::normalInky()
 {
-	inky_->setMainColor(getCayan());
-	inky_->initializeSample(SPRITE_GOST);
+	inky_->setFear(false);
+	inky_->updateSample();
 	inky_->setMode(GostMode::ATTACK);
 
 }
 void Field::normalClyde()
 {
-	clyde_->setMainColor(getOrange());
-	clyde_->initializeSample(SPRITE_GOST);
+	clyde_->setFear(false);
+	clyde_->updateSample();
 	clyde_->setMode(GostMode::ATTACK);
 }
-void Field::fearCast()
+void Field::fearGost()
 {
 	changeCastMode(GostMode::FEAR);
-	blinky_->setMainColor(getBlue());
-	blinky_->initializeSample(SPRITE_GOST);
-	pinky_->setMainColor(getBlue());
-	pinky_->initializeSample(SPRITE_GOST);
-	inky_->setMainColor(getBlue());
-	inky_->initializeSample(SPRITE_GOST);
-	clyde_->setMainColor(getBlue());
-	clyde_->initializeSample(SPRITE_GOST);
+	blinky_->setFear(true);
+	blinky_->updateSample();
+	pinky_->setFear(true);
+	pinky_->updateSample();
+	inky_->setFear(true);
+	inky_->updateSample();
+	clyde_->setFear(true);
+	clyde_->updateSample();
+}
+const std::shared_ptr<Gost> const Field::getGost(const GostType type) const
+{
+	std::shared_ptr<Gost> gost;
+	switch (type)
+	{
+	case BLINKY:
+	{
+		gost = blinky_;
+		break;
+	}
+	case PINKY:
+	{
+		gost = pinky_;
+		break;
+	}
+	case INKY:
+	{
+		gost = inky_;
+		break;
+	}
+	case CLYDE:
+	{
+		gost = clyde_;
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+	return gost;
 }
 
 void Field::setStart()
 {
-	
 	const int height = getVertical();
 	const int width = getHorizontal();
 	for (int i = 0; i < height; i++)
@@ -102,52 +109,52 @@ void Field::setStart()
 		{
 			switch (MAP[i][j])
 			{
-			case 'F':
+			case WALL_RIGHT_BOTTOM_CHAR:
 			{
 				level_[i][j] = wallRightBottom_;
 				break;
 			}
-			case 'T':
+			case WALL_LEFT_BOTTOM_CHAR:
 			{
 				level_[i][j] = wallLeftBottom_;
 				break;
 			}
-			case 'L':
+			case WALL_RIGHT_TOP_CHAR:
 			{
 				level_[i][j] = wallRightTop_;
 				break;
 			}
-			case 'J':
+			case WALL_LEFT_TOP_CHAR:
 			{
 				level_[i][j] = wallLeftTop_;
 				break;
 			}
-			case '-':
+			case WALL_HORIZONTAL_CHAR:
 			{
 				level_[i][j] = wallHorizontal_;
 				break;
 			}
-			case '=':
+			case DOOR_CHAR:
 			{
 				level_[i][j] = door_;
 				break;
 			}
-			case '|':
+			case WALL_VERTICAL_CHAR:
 			{
 				level_[i][j] = wallVertical_;
 				break;
 			}
-			case ' ':
+			case EMPTY_CHAR:
 			{
 				level_[i][j] = empty_;
 				break;
 			}
-			case '.':
+			case SCHORE_POINT_CHAR:
 			{
 				level_[i][j] = schorePoint_;
 				break;
 			}
-			case 'O':
+			case ENERGISER_CHAR:
 			{
 				level_[i][j] = energiser_;
 				break;
@@ -167,7 +174,7 @@ void Field::printAll()
 	for (int i = 0; i < vertical; i++)
 		for (int j = 0; j < horizontal; j++)
 			level_[i][j]->printOn(j, i, hdc_);
-	pacMan_.print(hdc_);
+	pacMan_->print(hdc_);
 	blinky_->print(hdc_);
 	pinky_->print(hdc_);
 	inky_->print(hdc_);
@@ -175,19 +182,19 @@ void Field::printAll()
 }
 void Field::resetDinamic()
 {
-	eraseDinamic(pacMan_.getPosition());
+	eraseDinamic(pacMan_->getPosition());
 	eraseDinamic(blinky_->getPosition());
 	eraseDinamic(pinky_->getPosition());
 	eraseDinamic(inky_->getPosition());
 	eraseDinamic(clyde_->getPosition());
 
-	pacMan_.setStartPosition();
+	pacMan_->setStartPosition();
 	blinky_->setStartPosition();
 	pinky_->setStartPosition();
 	inky_->setStartPosition();
 	clyde_->setStartPosition();
 
-	pacMan_.print(hdc_);
+	pacMan_->print(hdc_);
 	blinky_->print(hdc_);
 	pinky_->print(hdc_);
 	inky_->print(hdc_);
@@ -199,7 +206,7 @@ void Field::resetLevel()
 	resetDinamic();
 	printAll();
 }
-void Field::eraseDinamic(const POINT Point)
+void Field::eraseDinamic(const POINT& Point)
 {
 	const int size = getSize();
 	int xFirst = Point.x / size;
@@ -237,29 +244,29 @@ void Field::setBlinky()
 {
 	eraseDinamic(blinky_->getPosition());
 	blinky_->setReadyPosition();
-	blinkyReady_ = true;
+	blinkyReady = true;
 }
 void Field::setPinky()
 {
 	eraseDinamic(pinky_->getPosition());
 	pinky_->setReadyPosition();
-	pinkyReady_ = true;
+	pinkyReady = true;
 }
 void Field::setInky()
 {
 	eraseDinamic(inky_->getPosition());
 	inky_->setReadyPosition();
-	inkyReady_ = true;
+	inkyReady = true;
 }
 void Field::setClyde()
 {
 	eraseDinamic(clyde_->getPosition());
 	clyde_->setReadyPosition();
-	clydeReady_ = true;
+	clydeReady = true;
 }
 void Field::setEasySpeed()
 {
-	pacMan_.setSpeed(getMiddleSpeed());
+	pacMan_->setSpeed(getMiddleSpeed());
 	blinky_->setSpeed(getLowSpeed());
 	pinky_->setSpeed(getLowSpeed());
 	inky_->setSpeed(getLowSpeed());
@@ -267,7 +274,7 @@ void Field::setEasySpeed()
 }
 void Field::setMediumSpeed()
 {
-	pacMan_.setSpeed(getHighSpeed());
+	pacMan_->setSpeed(getHighSpeed());
 	blinky_->setSpeed(getMiddleSpeed());
 	pinky_->setSpeed(getMiddleSpeed());
 	inky_->setSpeed(getMiddleSpeed());
@@ -275,13 +282,13 @@ void Field::setMediumSpeed()
 }
 void Field::setHardSpeed()
 {
-	pacMan_.setSpeed(getMiddleSpeed());
+	pacMan_->setSpeed(getMiddleSpeed());
 	blinky_->setSpeed(getHighSpeed());
 	pinky_->setSpeed(getHighSpeed());
 	inky_->setSpeed(getHighSpeed());
 	clyde_->setSpeed(getHighSpeed());
 }
-const bool Field::isEmpty(const POINT position, const Direction direction)
+const bool Field::isEmpty(const POINT& position, const Direction direction)
 {
 	const int size = getSize();
 	int y = position.y / size;
@@ -326,7 +333,7 @@ const bool Field::isEmpty(const POINT position, const Direction direction)
 	}
 	return rezult;
 }
-void Field::moveDinamic(DinamicSprite* sprite, const POINT position, const Direction direction)
+void Field::moveDinamic(const std::shared_ptr<DinamicSprite> sprite, const POINT& position, const Direction direction)
 {
 	if (isEmpty(position, direction))
 	{
@@ -336,30 +343,26 @@ void Field::moveDinamic(DinamicSprite* sprite, const POINT position, const Direc
 }
 void Field::moveAllDinamic()
 {
-	bool IsUpdatePacMan = isEmpty(pacMan_.getPosition(), pacMan_.getDirection());
+	bool IsUpdatePacMan = isEmpty(pacMan_->getPosition(), pacMan_->getDirection());
 	bool IsUpdateBlinky = isEmpty(blinky_->getPosition(), blinky_->getDirection());
 	bool IsUpdatePinky = isEmpty(pinky_->getPosition(), pinky_->getDirection());
 	bool IsUpdateInky = isEmpty(inky_->getPosition(), inky_->getDirection());
 	bool IsUpdateClyde = isEmpty(clyde_->getPosition(), clyde_->getDirection());
 	
-	if (IsUpdatePacMan) eraseDinamic(pacMan_.getPosition());
+	if (IsUpdatePacMan) eraseDinamic(pacMan_->getPosition());
 	if (IsUpdateBlinky) eraseDinamic(blinky_->getPosition());
 	if (IsUpdatePinky) eraseDinamic(pinky_->getPosition());
 	if (IsUpdateInky) eraseDinamic(inky_->getPosition());
 	if (IsUpdateClyde) eraseDinamic(clyde_->getPosition());
-	if (IsUpdatePacMan) moveDinamic(&pacMan_, pacMan_.getPosition(), pacMan_.getDirection());
+	if (IsUpdatePacMan) moveDinamic(pacMan_, pacMan_->getPosition(), pacMan_->getDirection());
 	if (IsUpdateBlinky) moveDinamic(blinky_, blinky_->getPosition(), blinky_->getDirection());
 	if (IsUpdatePinky) moveDinamic(pinky_, pinky_->getPosition(), pinky_->getDirection());
 	if (IsUpdateInky) moveDinamic(inky_, inky_->getPosition(), inky_->getDirection());
 	if (IsUpdateClyde) moveDinamic(clyde_, clyde_->getPosition(), clyde_->getDirection());
 }
-void Field::turnDinamic(DinamicSprite* sprite, const Direction direction)
-{
-	if (isEmpty(sprite->getPosition(), direction)) sprite->setDirection(direction);
-}
 void Field::turnPacMan(Direction const direction)
 {
-	turnDinamic(&pacMan_, direction);
+	if (isEmpty(pacMan_->getPosition(), direction)) pacMan_->setDirection(direction);
 }
 bool Field::checkSpecial(const int x, const int y)
 {
@@ -373,7 +376,7 @@ bool Field::checkSpecial(const int x, const int y)
 void Field::castMovement()
 {
 	int size = getSize();
-	if (blinkyReady_)
+	if (blinkyReady)
 	{
 		POINT position = blinky_->getPosition();
 		if (position.x % size == 0 && position.y % size == 0)
@@ -391,7 +394,7 @@ void Field::castMovement()
 				}
 				if (blinky_->getMode() == 0)
 				{
-					blinky_->setDirectionPoint(pacMan_.getPosition(), pacMan_.getDirection(), blinky_->getPosition());
+					blinky_->setDirectionPoint(pacMan_->getPosition(), pacMan_->getDirection(), blinky_->getPosition());
 				}
 				if (checkSpecial(position.x / size, position.y / size))
 				{
@@ -401,7 +404,7 @@ void Field::castMovement()
 			}
 		}
 	}
-	if (pinkyReady_)
+	if (pinkyReady)
 	{
 		POINT position = pinky_->getPosition();
 		if (position.x % size == 0 && position.y % size == 0)
@@ -419,7 +422,7 @@ void Field::castMovement()
 				}
 				if (pinky_->getMode() == 0)
 				{
-					pinky_->setDirectionPoint(pacMan_.getPosition(), pacMan_.getDirection(), blinky_->getPosition());
+					pinky_->setDirectionPoint(pacMan_->getPosition(), pacMan_->getDirection(), blinky_->getPosition());
 				}
 				if (checkSpecial(position.x / size, position.y / size))
 				{
@@ -429,7 +432,7 @@ void Field::castMovement()
 			}
 		}
 	}
-	if (inkyReady_)
+	if (inkyReady)
 	{
 		POINT position = inky_->getPosition();
 		if (position.x % size == 0 && position.y % size == 0)
@@ -447,7 +450,7 @@ void Field::castMovement()
 				}
 				if (inky_->getMode() == 0)
 				{
-					inky_->setDirectionPoint(pacMan_.getPosition(), pacMan_.getDirection(), blinky_->getPosition());
+					inky_->setDirectionPoint(pacMan_->getPosition(), pacMan_->getDirection(), blinky_->getPosition());
 				}
 				if (checkSpecial(position.x / size, position.y / size))
 				{
@@ -457,7 +460,7 @@ void Field::castMovement()
 			}
 		}
 	}
-	if (clydeReady_)
+	if (clydeReady)
 	{
 		POINT position = clyde_->getPosition();
 		if (position.x % size == 0 && position.y % size == 0)
@@ -475,7 +478,7 @@ void Field::castMovement()
 				}
 				if (clyde_->getMode() == 0)
 				{
-					clyde_->setDirectionPoint(pacMan_.getPosition(), pacMan_.getDirection(), blinky_->getPosition());
+					clyde_->setDirectionPoint(pacMan_->getPosition(), pacMan_->getDirection(), blinky_->getPosition());
 				}
 				if (checkSpecial(position.x / size, position.y / size))
 				{
@@ -505,14 +508,14 @@ Field::Field()
 	setSprites();
 	const int vertical = getVertical();
 	const int horizontal = getHorizontal();
-	level_ = new StaticSprite** [vertical];
+	level_ = std::unique_ptr<std::unique_ptr<std::shared_ptr<StaticSprite>[]>[]>(new std::unique_ptr<std::shared_ptr<StaticSprite>[]>[vertical]);
 	
 	for (int i = 0; i < vertical; i++)
 	{
-		level_[i] = new StaticSprite * [horizontal];
+		level_[i] = std::unique_ptr<std::shared_ptr<StaticSprite>[]>(new std::shared_ptr<StaticSprite>[horizontal]);
 	}
 	setStart();
-	blinkyReady_ = pinkyReady_ = inkyReady_ = clydeReady_ = false;
+	blinkyReady = pinkyReady = inkyReady = clydeReady = false;
 	mode_ = GostMode::ATTACK;
 }
 const SpriteType Field::getSpriteTypeAt(const int x, const int y)
@@ -522,20 +525,4 @@ const SpriteType Field::getSpriteTypeAt(const int x, const int y)
 void Field::setEmptyAt(const int x, const int y)
 {
 	level_[y][x] = empty_;
-}
-Field::~Field()
-{
-	if (level_ != nullptr)
-	{
-		const int vertical = getVertical();
-		for (int i = 0; i < vertical; i++)
-		{
-			if (level_[i] != nullptr)
-			{
-				delete[] level_[i];
-			}
-		}
-		delete[] level_;
-	}
-	ReleaseDC(hwnd_, hdc_);
 }

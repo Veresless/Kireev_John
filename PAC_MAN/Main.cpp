@@ -9,8 +9,14 @@ int main()
 	bool infitity = true;
 	while (infitity)
 	{
-		if ((GetKeyState(getEscKey()) & getBinaryToBool()) != 0) return 0;
-		if ((GetKeyState(getEnterKey()) & getBinaryToBool()) != 0) infitity = false;
+		if ((GetKeyState(getEscKey()) & getBinaryToBool()) != 0)
+		{
+			return 0;
+		}
+		if ((GetKeyState(getEnterKey()) & getBinaryToBool()) != 0)
+		{
+			infitity = false;
+		}
 	}
 	system("cls");
 	Game game;

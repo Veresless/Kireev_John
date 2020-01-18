@@ -5,12 +5,11 @@ void Pinky::setStartPosition()
 {
 	point_ = getPinkyStartPosition();
 }
-Pinky::Pinky()
+Pinky::Pinky() : Gost(getPink(), getBlue(), getPinkyRetreatPoint())
 {
 	setStartPosition();
-	retreatPoint_ = getPinkyRetreatPoint();
 }
-void Pinky::setDirectionPoint(const POINT point, const Direction direction, const POINT blinky)
+void Pinky::setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky)
 {
 	const int count = getPinkyDistanse();
 	switch (direction)
