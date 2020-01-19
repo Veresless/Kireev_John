@@ -1,7 +1,4 @@
-﻿#include "PacMan.h"
-#include "Constants.h"
-#include "MapConstants.h"
-
+﻿#include "../Headers/PacMan.h"
 
 void PacMan::setStartPosition()
 {

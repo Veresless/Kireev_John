@@ -1,5 +1,4 @@
-#include "Inky.h"
-#include "Constants.h"
+#include "../Headers/Inky.h"
 
 void Inky::setStartPosition()
 {

@@ -1,5 +1,4 @@
-#include "Pinky.h"
-#include "Constants.h"
+#include "../Headers/Pinky.h"
 
 void Pinky::setStartPosition()
 {

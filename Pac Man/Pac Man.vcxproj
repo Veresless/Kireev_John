@@ -18,6 +18,34 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Code\Sourses\Blinky.cpp" />
+    <ClCompile Include="Code\Sourses\Clyde.cpp" />
+    <ClCompile Include="Code\Sourses\DinamicSprite.cpp" />
+    <ClCompile Include="Code\Sourses\Field.cpp" />
+    <ClCompile Include="Code\Sourses\Game.cpp" />
+    <ClCompile Include="Code\Sourses\Gost.cpp" />
+    <ClCompile Include="Code\Sourses\Inky.cpp" />
+    <ClCompile Include="Code\Sourses\Main.cpp" />
+    <ClCompile Include="Code\Sourses\PacMan.cpp" />
+    <ClCompile Include="Code\Sourses\Pinky.cpp" />
+    <ClCompile Include="Code\Sourses\StaticSprite.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\Headers\Blinky.h" />
+    <ClInclude Include="Code\Headers\Clyde.h" />
+    <ClInclude Include="Code\Headers\Constants.h" />
+    <ClInclude Include="Code\Headers\DinamicSprite.h" />
+    <ClInclude Include="Code\Headers\Field.h" />
+    <ClInclude Include="Code\Headers\Game.h" />
+    <ClInclude Include="Code\Headers\Gost.h" />
+    <ClInclude Include="Code\Headers\Inky.h" />
+    <ClInclude Include="Code\Headers\ISprite.h" />
+    <ClInclude Include="Code\Headers\MapConstants.h" />
+    <ClInclude Include="Code\Headers\PacMan.h" />
+    <ClInclude Include="Code\Headers\Pinky.h" />
+    <ClInclude Include="Code\Headers\StaticSprite.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{64F53F6C-3520-4713-A5A3-A0E0B9FEDA61}</ProjectGuid>
@@ -122,34 +150,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Code\Headers\Blinky.h" />
-    <ClInclude Include="Code\Headers\Clyde.h" />
-    <ClInclude Include="Code\Headers\Constants.h" />
-    <ClInclude Include="Code\Headers\DinamicSprite.h" />
-    <ClInclude Include="Code\Headers\Field.h" />
-    <ClInclude Include="Code\Headers\Game.h" />
-    <ClInclude Include="Code\Headers\Gost.h" />
-    <ClInclude Include="Code\Headers\Inky.h" />
-    <ClInclude Include="Code\Headers\ISprite.h" />
-    <ClInclude Include="Code\Headers\MapConstants.h" />
-    <ClInclude Include="Code\Headers\PacMan.h" />
-    <ClInclude Include="Code\Headers\Pinky.h" />
-    <ClInclude Include="Code\Headers\StaticSprite.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Code\Sourses\Blinky.cpp" />
-    <ClCompile Include="Code\Sourses\Clyde.cpp" />
-    <ClCompile Include="Code\Sourses\DinamicSprite.cpp" />
-    <ClCompile Include="Code\Sourses\Field.cpp" />
-    <ClCompile Include="Code\Sourses\Game.cpp" />
-    <ClCompile Include="Code\Sourses\Gost.cpp" />
-    <ClCompile Include="Code\Sourses\Inky.cpp" />
-    <ClCompile Include="Code\Sourses\Main.cpp" />
-    <ClCompile Include="Code\Sourses\PacMan.cpp" />
-    <ClCompile Include="Code\Sourses\Pinky.cpp" />
-    <ClCompile Include="Code\Sourses\StaticSprite.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

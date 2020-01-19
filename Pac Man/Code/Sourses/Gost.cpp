@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <ctime>
 
-#include "Gost.h"
-#include "Blinky.h"
-#include "Pinky.h"
-#include "Inky.h"
-#include "Clyde.h"
+#include "../Headers/Gost.h"
+#include "../Headers/Blinky.h"
+#include "../Headers/Pinky.h"
+#include "../Headers/Inky.h"
+#include "../Headers/Clyde.h"
 
 Gost::Gost(COLORREF mainColor, COLORREF fearColor, const POINT& retreatPoint) :
 	DinamicSprite(SpriteType::GOST, mainColor, SPRITE_GOST), fearColor_(fearColor), retreatPoint_(retreatPoint), fear_(false) {}

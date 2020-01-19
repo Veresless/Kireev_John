@@ -2,7 +2,8 @@
 #include <fstream>
 #include <string>
 #include <list>
-#include "Game.h"
+
+#include "../Headers/Game.h"
 
 const bool Menu()
 {

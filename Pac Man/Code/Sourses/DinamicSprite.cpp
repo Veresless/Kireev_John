@@ -1,5 +1,4 @@
-#include "DinamicSprite.h"
-#include "Constants.h"
+#include "../Headers/DinamicSprite.h"
 
 DinamicSprite::DinamicSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]) : 
 	size_(getSize()), type_(type), mainColor_(mainColor), backgroundColor_(getBackgroundColor())

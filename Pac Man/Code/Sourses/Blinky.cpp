@@ -1,5 +1,4 @@
-#include "Blinky.h"
-#include "Constants.h"
+#include "../Headers/Blinky.h"
 
 void Blinky::setStartPosition()
 {

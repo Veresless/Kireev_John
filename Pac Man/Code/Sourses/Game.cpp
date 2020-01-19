@@ -2,8 +2,7 @@
 #include <string>
 #include <future>
 
-#include "Game.h"
-#include "Constants.h"
+#include "../Headers/Game.h"
 
 void Game::setStartParams()
 {
