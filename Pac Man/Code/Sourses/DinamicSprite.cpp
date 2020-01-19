@@ -1,14 +1,18 @@
 #include "../Headers/DinamicSprite.h"
 
-DinamicSprite::DinamicSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]) : 
-	size_(getSize()), type_(type), mainColor_(mainColor), backgroundColor_(getBackgroundColor())
+DinamicSprite::DinamicSprite(const COLORREF mainColor, const POINT& position, const bool sample[]) : 
+	size_(getSize()), mainColor_(mainColor), backgroundColor_(getBackgroundColor()),
+	direction_(UP), point_(position), speed_(getLowSpeed())
 {
 	sample_ = std::unique_ptr<std::unique_ptr<COLORREF[]>[]>(new std::unique_ptr<COLORREF[]>[size_]);
 	for (int i = 0; i < size_; i++)
 	{
 		sample_[i] = std::unique_ptr<COLORREF[]>(new COLORREF[size_]);
+		for (int j = 0; j < size_; j++)
+		{
+			sample_[i][j] = ((true == sample[i * size_ + j]) ? mainColor_ : backgroundColor_);
+		}
 	}
-	initializeSample(sample);
 }
 void DinamicSprite::setDirection(const Direction direction)
 {
@@ -17,6 +21,10 @@ void DinamicSprite::setDirection(const Direction direction)
 void DinamicSprite::setSpeed(const int speed)
 {
 	speed_ = speed;
+}
+void DinamicSprite::setPosition(const POINT& position)
+{
+	point_ = position;
 }
 void DinamicSprite::move()
 {
@@ -55,17 +63,7 @@ void DinamicSprite::move()
 		break;
 	}
 }
-void DinamicSprite::initializeSample(const bool sample[])
-{
-	for (int i = 0; i < size_; i++)
-	{
-		for (int j = 0; j < size_; j++)
-		{
-			sample_[i][j] = ((true == sample[i * size_ + j]) ? mainColor_ : backgroundColor_);
-		}
-	}
-}
-const void DinamicSprite::print(const HDC hdc) const
+void DinamicSprite::print(const HDC hdc) const
 {
 	const int HIGTH = getVertical() * size_;
 	const int WIDTH = getHorizontal() * size_;

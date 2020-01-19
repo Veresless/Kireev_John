@@ -1,11 +1,3 @@
-﻿#include "../Headers/PacMan.h"
+#include "../Headers/PacMan.h"
 
-void PacMan::setStartPosition()
-{
-	point_ = getPacManStartPosition();
-}
-
-PacMan::PacMan() : DinamicSprite(SpriteType::PAC_MAN, getYellow(), SPRITE_PAC_MAN)
-{
-	setStartPosition();
-}
+PacMan::PacMan() :DinamicSprite(getYellow(), getPacManStartPosition(), SPRITE_PAC_MAN) {};

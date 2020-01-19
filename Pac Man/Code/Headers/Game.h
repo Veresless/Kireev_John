@@ -6,30 +6,29 @@
 class Game {
 public:
 	Game();
-	const int run();
+	int run();
 private:
 	void goToXY(const int x, const int y) const;
 	void clearConsole(const int x, const int y) const;
-	const bool exit() const;
-	const bool checkPosition(const std::shared_ptr<PacMan> const pacMan, const std::shared_ptr<Gost> const gost) const;
-	void setStartParams();
+	bool exit() const;
+	bool checkPosition(const std::shared_ptr<PacMan> const pacMan, const std::shared_ptr<Gost> const gost) const;
 	void updateStatistic()const;
 	void pacManMovement();
-	void castMovement();
+	void gostMovement();
 	void pacManEat();
 	void pacManDie();
 	void die();
 	void modeTimer();
 	void loadLevel();
-	const bool levelUp();
+	bool levelUp();
 private:
 	int schore_;
 	int lifes_;
 	int level_;
-	ULONGLONG deltaTime_;
-	unsigned long long energiserTime_;
+	const ULONGLONG deltaTime_;
+	ULONGLONG energiserTime_;
 	bool energiserTimeOn_;
-	short castDieCount_;
+	short gostDieCount_;
 	int countEatenPoints_;
 	bool live_;
 	Field field_;

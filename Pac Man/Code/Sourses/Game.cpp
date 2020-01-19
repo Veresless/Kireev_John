@@ -4,93 +4,100 @@
 
 #include "../Headers/Game.h"
 
-void Game::setStartParams()
+Game::Game(): lifes_(getStartLifes()), deltaTime_(getDefaultDeltaTime()), level_(getStartLevel()),
+schore_(0), gostDieCount_(0), countEatenPoints_(0), energiserTime_(0), energiserTimeOn_(false), live_(true){}
+int Game::run()
 {
-	schore_ = 0;
-	lifes_ = getStartLifes();
-	level_ = 1;
-	deltaTime_ = getDefaultDeltaTime();
-}
-Game::Game()
-{
-	setStartParams();
-}
-void Game::loadLevel()
-{
-	field_.printAll();
-}
-const bool Game::levelUp()
-{
-	if (countEatenPoints_ == getMaxCountPoints())
+	bool run = true;
+	loadLevel();
+	while (run)
 	{
-		level_++;
-		countEatenPoints_ = 0;
-		return true;
-	}
-	return false;
-}
-void Game::updateStatistic() const
-{
-	std::cout <<  level_ << '\t' << lifes_ << '\t' << schore_ << '\r';
-}
-void Game::pacManMovement()
-{
-	if ((GetKeyState(getWKey()) & getBinaryToBool()) || (GetKeyState(getUpKey()) & getBinaryToBool())) // W w and UP
-	{
-		field_.turnPacMan(UP);
-	}
-	else if ((GetKeyState(getDKey()) & getBinaryToBool()) || (GetKeyState(getRightKey()) & getBinaryToBool())) // D d and RIGHT
-	{
-		field_.turnPacMan(RIGHT);
-	}
-	else if ((GetKeyState(getSKey()) & getBinaryToBool()) || (GetKeyState(getDownKey()) & getBinaryToBool())) // S s and DOWN
-	{
-		field_.turnPacMan(DOWN);
-	}
-	else if ((GetKeyState(getAKey()) & getBinaryToBool()) || (GetKeyState(getLeftKey()) & getBinaryToBool())) // A a and LEFT
-	{
-		field_.turnPacMan(LEFT);
-	}
-}
-void Game::castMovement()
-{
-	field_.castMovement();
-}
-void Game::pacManEat()
-{
-	POINT position = field_.getPacMan()->getPosition();
-	int size = getSize();
-	if (position.x % size == 0 && position.y % size == 0)
-	{
-		if (field_.getSpriteTypeAt(position.x / size, position.y / size) == SpriteType::SCHORE_POINT)
+		if (level_ < getSecondChangeLevel())
 		{
-			schore_ += getPointSchore();
-			countEatenPoints_++;
-			field_.setEmptyAt(position.x / size, position.y / size);
+			field_.setEasySpeed();
 		}
-		if (field_.getSpriteTypeAt(position.x / size, position.y / size) == SpriteType::ENERGISER)
+		else if (level_ < getLastChangeLevel())
 		{
-			schore_ += getEnergiserSchore();
-			countEatenPoints_++;
-			if (level_ < getLevelWhereCastNotFear())
+			field_.setMediumSpeed();
+		}
+		else
+		{
+			field_.setHardSpeed();
+		}
+		live_ = true;
+		clearConsole(getHorizontal(), getCountStatisticStrings());
+		std::cout << "Press 'Enter' to continue...";
+		while (0 == (GetKeyState(getEnterKey()) & getBinaryToBool()));
+		clearConsole(getHorizontal(), 1);
+		auto future = std::async(std::launch::async, [&] {modeTimer(); });
+		std::cout << "3";
+		Sleep(getOneSecond());
+		std::cout << ", 2";
+		Sleep(getOneSecond());
+		std::cout << ", 1...\r";
+		Sleep(getOneSecond());
+		std::cout << "Level:\tLifes:\tSchore:\n";
+		while (live_ && run)
+		{
+			live_ = run = exit();
+			ULONGLONG StartTime = GetTickCount64();
+			pacManEat();
+			updateStatistic();
+			if (levelUp()) break;
+			pacManMovement();
+			gostMovement();
+			field_.moveAllDinamic();
+			die();
+			ULONGLONG StopTime = GetTickCount64();
+			ULONGLONG Time = deltaTime_ - (StopTime - StartTime) % deltaTime_;
+			Sleep(Time);
+		}
+		if (!live_) 
+		{
+			if (0 >= lifes_--)
 			{
-				energiserTime_ = GetTickCount64();
-				energiserTimeOn_ = false;
-				field_.fearGost();
-				castDieCount_ = 1;
+				run = false;
 			}
-			field_.setEmptyAt(position.x / size, position.y / size);
+			else
+			{
+				field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
+			}
 		}
+		else
+		{
+			live_ = false;
+			field_.normalGost();
+			field_.resetLevel();
+			field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
+		}
+
 	}
+	return schore_;
 }
-void Game::pacManDie()
+void Game::goToXY(const int x, const int y) const {
+	HANDLE hConsole;
+	COORD cursorLoc;
+	std::cout.flush();
+	cursorLoc.X = x;
+	cursorLoc.Y = y;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hConsole, cursorLoc);
+}
+void Game::clearConsole(const int x, const int y) const
 {
-	live_ = false;
-	Sleep(getOneSecond());
-	field_.normalCast();
-	field_.resetDinamic();
+	goToXY(0, 0);
+	std::string spase(x, ' ');
+	for (int i = 0; i < y; i++)
+	{
+		std::cout << spase << '\n';
+	}
+	goToXY(0, 0);
 }
-const bool Game::checkPosition(const std::shared_ptr<PacMan> const pacMan, const std::shared_ptr<Gost> const gost) const
+bool Game::exit() const
+{
+	return ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
+}
+bool Game::checkPosition(const std::shared_ptr<PacMan> const pacMan, const std::shared_ptr<Gost> const gost) const
 {
 	POINT firstPoint = pacMan->getPosition();
 	Direction firstDirection = pacMan->getDirection();
@@ -159,6 +166,116 @@ const bool Game::checkPosition(const std::shared_ptr<PacMan> const pacMan, const
 			(newFirstPoint.x == newSecondPoint.x && newFirstPoint.y == newSecondPoint.y) ||
 			(firstPoint.x == secondPoint.x && firstPoint.y == secondPoint.y);
 }
+void Game::updateStatistic() const
+{
+	std::cout <<  level_ << '\t' << lifes_ << '\t' << schore_ << '\r';
+}
+void Game::pacManMovement()
+{
+	if ((GetKeyState(getWKey()) & getBinaryToBool()) || (GetKeyState(getUpKey()) & getBinaryToBool())) // W w and UP
+	{
+		field_.turnPacMan(UP);
+	}
+	else if ((GetKeyState(getDKey()) & getBinaryToBool()) || (GetKeyState(getRightKey()) & getBinaryToBool())) // D d and RIGHT
+	{
+		field_.turnPacMan(RIGHT);
+	}
+	else if ((GetKeyState(getSKey()) & getBinaryToBool()) || (GetKeyState(getDownKey()) & getBinaryToBool())) // S s and DOWN
+	{
+		field_.turnPacMan(DOWN);
+	}
+	else if ((GetKeyState(getAKey()) & getBinaryToBool()) || (GetKeyState(getLeftKey()) & getBinaryToBool())) // A a and LEFT
+	{
+		field_.turnPacMan(LEFT);
+	}
+}
+void Game::gostMovement()
+{
+	field_.gostMovement();
+}
+void Game::pacManEat()
+{
+	POINT position = field_.getPacMan()->getPosition();
+	int size = getSize();
+	if (position.x % size == 0 && position.y % size == 0)
+	{
+		if (field_.getSpriteTypeAt(position.x / size, position.y / size) == StaticSpriteType::SCHORE_POINT)
+		{
+			schore_ += getPointSchore();
+			countEatenPoints_++;
+			field_.setEmptyAt(position.x / size, position.y / size);
+		}
+		if (field_.getSpriteTypeAt(position.x / size, position.y / size) == StaticSpriteType::ENERGISER)
+		{
+			schore_ += getEnergiserSchore();
+			countEatenPoints_++;
+			if (level_ < getLevelWhereCastNotFear())
+			{
+				energiserTime_ = GetTickCount64();
+				energiserTimeOn_ = false;
+				field_.fearGost();
+				gostDieCount_ = 1;
+			}
+			field_.setEmptyAt(position.x / size, position.y / size);
+		}
+	}
+}
+void Game::pacManDie()
+{
+	live_ = false;
+	Sleep(getOneSecond());
+	field_.normalGost();
+	field_.resetDinamic();
+}
+void Game::die()
+{
+	std::shared_ptr<PacMan> pacMan = field_.getPacMan();
+	std::shared_ptr<Gost> blinky = field_.getGost(GostType::BLINKY);
+	std::shared_ptr<Gost> pinky = field_.getGost(GostType::PINKY);
+	std::shared_ptr<Gost> inky = field_.getGost(GostType::INKY);
+	std::shared_ptr<Gost> clyde = field_.getGost(GostType::CLYDE);
+
+	if (checkPosition(pacMan, blinky))
+	{
+		if (blinky->getMode() == GostMode::FEAR)
+		{
+				schore_ += getCastDieSchore() * gostDieCount_ << 1;
+				field_.normalBlinky();
+				field_.setBlinkyReady();
+		}
+		else pacManDie();
+	}
+	if (checkPosition(pacMan, pinky))
+	{
+		if (pinky->getMode() == GostMode::FEAR)
+		{
+			schore_ += getCastDieSchore() * gostDieCount_ << 1;
+			field_.normalPinky();
+			field_.setPinkyReady();
+		}
+		else pacManDie();
+	}
+	if (checkPosition(pacMan, inky))
+	{
+		if (inky->getMode() == GostMode::FEAR)
+		{
+			schore_ += getCastDieSchore() * gostDieCount_ << 1;
+			field_.normalInky();
+			field_.setInkyReady();
+		}
+		else pacManDie();
+	}
+	if (checkPosition(pacMan, clyde))
+	{
+		if (clyde->getMode() == GostMode::FEAR)
+		{
+			schore_ += getCastDieSchore() * gostDieCount_ << 1;
+			field_.normalClyde();
+			field_.setClydeReady();
+		}
+		else pacManDie();
+	}
+}
 void Game::modeTimer()
 {
 	int fearTime =getFearTime() - level_ * getFearDifferenseTime();
@@ -176,13 +293,13 @@ void Game::modeTimer()
 	while (live_)
 	{
 		ULONGLONG start = GetTickCount64();
-		GostMode mode = field_.getCastMode();
-		if (!field_.blinkyReady) field_.setBlinky();
-		if (!field_.pinkyReady && GetTickCount64() - startTime >= getPinkyStartTime()) field_.setPinky();
+		GostMode mode = field_.getGostMode();
+		if (!field_.blinkyReady) field_.setBlinkyReady();
+		if (!field_.pinkyReady && GetTickCount64() - startTime >= getPinkyStartTime()) field_.setPinkyReady();
 		if (!field_.inkyReady && countEatenPoints_ >= getInkyPointCountCondition() &&
-			GetTickCount64() - startTime >= getInkyStartTime()) field_.setInky();
+			GetTickCount64() - startTime >= getInkyStartTime()) field_.setInkyReady();
 		if (!field_.clydeReady && countEatenPoints_ >= getClydePointCountCondition() &&
-			GetTickCount64() - startTime >= getClydeStartTime()) field_.setClyde();
+			GetTickCount64() - startTime >= getClydeStartTime()) field_.setClydeReady();
 		if (mode == GostMode::FEAR)
 		{
 			if (!energiserTimeOn_)
@@ -192,7 +309,7 @@ void Game::modeTimer()
 			}
 			if (GetTickCount64() - energiserTime_ >= fearTime)
 			{
-				field_.normalCast();
+				field_.normalGost();
 			}
 		}
 		else
@@ -205,148 +322,23 @@ void Game::modeTimer()
 			else if (GetTickCount64() - startTime >= secondWaveRetreat) NewCastMode = GostMode::ATTACK;
 			else if (GetTickCount64() - startTime >= firstWaveAttack) NewCastMode = GostMode::RETREAT;
 			else if (GetTickCount64() - startTime >= firstWaveRetreat) NewCastMode = GostMode::ATTACK;
-			if (NewCastMode != mode) field_.changeCastMode(NewCastMode);
+			if (NewCastMode != mode) field_.setGostMode(NewCastMode);
 		}
 		deltaTime = GetTickCount64() - start;
 	}
 }
-void Game::die()
+void Game::loadLevel()
 {
-	std::shared_ptr<PacMan> pacMan = field_.getPacMan();
-	std::shared_ptr<Gost> blinky = field_.getGost(GostType::BLINKY);
-	std::shared_ptr<Gost> pinky = field_.getGost(GostType::PINKY);
-	std::shared_ptr<Gost> inky = field_.getGost(GostType::INKY);
-	std::shared_ptr<Gost> clyde = field_.getGost(GostType::CLYDE);
+	field_.printAll();
+}
+bool Game::levelUp()
+{
+	if (countEatenPoints_ == getMaxCountPoints())
+	{
+		level_++;
+		countEatenPoints_ = 0;
+		return true;
+	}
+	return false;
+}
 
-	if (checkPosition(pacMan, blinky))
-	{
-		if (blinky->getMode() == GostMode::FEAR)
-		{
-				schore_ += getCastDieSchore() * castDieCount_ << 1;
-				field_.normalBlinky();
-				field_.setBlinky();
-		}
-		else pacManDie();
-	}
-	if (checkPosition(pacMan, pinky))
-	{
-		if (pinky->getMode() == GostMode::FEAR)
-		{
-			schore_ += getCastDieSchore() * castDieCount_ << 1;
-			field_.normalPinky();
-			field_.setPinky();
-		}
-		else pacManDie();
-	}
-	if (checkPosition(pacMan, inky))
-	{
-		if (inky->getMode() == GostMode::FEAR)
-		{
-			schore_ += getCastDieSchore() * castDieCount_ << 1;
-			field_.normalInky();
-			field_.setInky();
-		}
-		else pacManDie();
-	}
-	if (checkPosition(pacMan, clyde))
-	{
-		if (clyde->getMode() == GostMode::FEAR)
-		{
-			schore_ += getCastDieSchore() * castDieCount_ << 1;
-			field_.normalClyde();
-			field_.setClyde();
-		}
-		else pacManDie();
-	}
-}
-void Game::goToXY(const int x, const int y) const {
-	HANDLE hConsole;
-	COORD cursorLoc;
-	std::cout.flush();
-	cursorLoc.X = x;
-	cursorLoc.Y = y;
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hConsole, cursorLoc);
-}
-void Game::clearConsole(const int x, const int y) const
-{
-	goToXY(0, 0);
-	std::string spase(x, ' ');
-	for (int i = 0; i < y; i++)
-	{
-		std::cout << spase << '\n';
-	}
-	goToXY(0, 0);
-}
-const bool Game::exit() const
-{
-	return ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
-}
-const int Game::run()
-{
-	bool run = true;
-	loadLevel();
-	while (run)
-	{
-		if (level_ < getSecondChangeLevel())
-		{
-			field_.setEasySpeed();
-		}
-		else if (level_ < getLastChangeLevel())
-		{
-			field_.setMediumSpeed();
-		}
-		else
-		{
-			field_.setHardSpeed();
-		}
-		live_ = true;
-		clearConsole(getHorizontal(), getCountStatisticStrings());
-		std::cout << "Press 'Enter' to continue...";
-		while ((GetKeyState(getEnterKey()) & getBinaryToBool()) == 0);
-		clearConsole(getHorizontal(), 1);
-		auto future = std::async(std::launch::async, [&] {modeTimer(); });
-		std::cout << "3";
-		Sleep(getOneSecond());
-		std::cout << ", 2";
-		Sleep(getOneSecond());
-		std::cout << ", 1...\r";
-		Sleep(getOneSecond());
-		std::cout << "Level:\tLifes:\tSchore:\n";
-		while (live_ && run)
-		{
-			live_ = run = exit();
-			ULONGLONG StartTime = GetTickCount64();
-			pacManEat();
-			updateStatistic();
-			if (levelUp()) break;
-			pacManMovement();
-			castMovement();
-			field_.moveAllDinamic();
-			die();
-			ULONGLONG StopTime = GetTickCount64();
-			ULONGLONG Time = deltaTime_ - (StopTime - StartTime) % deltaTime_;
-			Sleep(Time);
-		}
-		if (!live_) 
-		{
-			if (lifes_-- <= 0)
-			{
-				run = false;
-			}
-			else
-			{
-				field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
-			}
-		}
-		else
-		{
-			live_ = false;
-			field_.normalCast();
-			field_.resetLevel();
-			field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
-		}
-
-	}
-	return schore_;
-}

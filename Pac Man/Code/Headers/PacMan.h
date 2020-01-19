@@ -7,9 +7,9 @@ class PacMan : public DinamicSprite
 {
 public:
 	PacMan();
-	virtual void setStartPosition() override;
 private:
-	PacMan(PacMan const& pacMan);
-	PacMan(PacMan const&& pacMan);
+	PacMan(PacMan const& pacman);
+	PacMan(PacMan const&& pacman);
 };
+
 #endif

@@ -1,13 +1,6 @@
 #include "../Headers/Blinky.h"
 
-void Blinky::setStartPosition()
-{
-	point_ = getBlinkyStartPosition();
-}
-Blinky::Blinky(): Gost(getRed(), getBlue(), getBlinkyRetreatPoint())
-{
-	setStartPosition();
-}
+Blinky::Blinky(): Gost(getRed(), getBlue(), getBlinkyStartPosition(), getBlinkyRetreatPoint()){}
 void Blinky::setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky)
 {
 	directionPoint_ = point;

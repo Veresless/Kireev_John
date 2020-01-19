@@ -3,14 +3,12 @@
 
 #include <string>
 
-enum SpriteType
+enum StaticSpriteType
 {
 	WALL,
 	SCHORE_POINT,
 	ENERGISER,
-	EMPTY,
-	PAC_MAN,
-	GOST
+	EMPTY
 };
 
 enum GostMode
@@ -34,7 +32,7 @@ enum Direction
 	DOWN,
 	RIGHT
 };
-inline const int getDirectionCount()
+inline int getDirectionCount()
 {
 	return 4;
 }
@@ -184,41 +182,41 @@ const char WALL_RIGHT_TOP_CHAR = 'L';
 const char WALL_RIGHT_BOTTOM_CHAR ='F';
 const char DOOR_CHAR = '=';
 
-inline const COLORREF getBackgroundColor()
+inline COLORREF getBackgroundColor()
 {
 	return RGB(0, 0, 0);
 }
-inline const COLORREF getBlue()
+inline COLORREF getBlue()
 {
 	return RGB(0, 0, 255);
 }
 
-inline const COLORREF getOrange()
+inline COLORREF getOrange()
 {
 	return RGB(255, 100, 0);
 }
 
-inline const COLORREF getCayan()
+inline COLORREF getCayan()
 {
 	return RGB(0, 255, 255);
 }
 
-inline const COLORREF getPink()
+inline COLORREF getPink()
 {
 	return RGB(255, 190, 200);
 }
 
-inline const COLORREF getRed()
+inline COLORREF getRed()
 {
 	return RGB(255, 0, 0);
 }
 
-inline const COLORREF getYellow()
+inline COLORREF getYellow()
 {
 	return RGB(255, 255, 0);
 }
 
-inline const COLORREF getWhite()
+inline COLORREF getWhite()
 {
 	return RGB(255, 255, 255);
 }

@@ -8,20 +8,18 @@
 class Gost : public DinamicSprite
 {
 public:
-	Gost(COLORREF mainColor, COLORREF fearColor, const POINT& retreatPoint);
-	inline const GostMode getMode() const;
+	Gost(const COLORREF mainColor, const COLORREF fearColor, const POINT& position, const POINT& retreatPoint);
+	inline GostMode getMode() const;
 	void setFear(const bool fear);
-	void setReadyPosition();
 	void choiseDirection(bool ways[4]);
 	virtual void setDirectionPoint(const POINT& Point, const Direction direction, const POINT& Blinky) = 0;
 	void setMode(const GostMode mode);
 	void updateSample();
-	static std::shared_ptr<Gost> createGost(const GostType type);
+	static const std::shared_ptr<Gost> createGost(const GostType type);
 protected:
-	const int distanse (const POINT& position, const POINT& directionPoint);
-	virtual void initializeSample(const bool sample[]) override;
+	int distanse (const POINT& position, const POINT& directionPoint);
 private:
-	const POINT getPoint(const Direction direction) const;
+	POINT getPoint(const Direction direction) const;
 	void decision(const std::vector<Direction>& directions, const POINT& directionPoint);
 protected:
 	bool fear_;
@@ -30,7 +28,7 @@ protected:
 	const POINT retreatPoint_;
 	POINT directionPoint_;
 };
-inline const GostMode Gost::getMode() const
+inline GostMode Gost::getMode() const
 {
 	return mode_;
 }

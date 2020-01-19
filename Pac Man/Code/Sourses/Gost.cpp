@@ -7,13 +7,14 @@
 #include "../Headers/Inky.h"
 #include "../Headers/Clyde.h"
 
-Gost::Gost(COLORREF mainColor, COLORREF fearColor, const POINT& retreatPoint) :
-	DinamicSprite(SpriteType::GOST, mainColor, SPRITE_GOST), fearColor_(fearColor), retreatPoint_(retreatPoint), fear_(false) {}
-const int Gost::distanse(const POINT& position, const POINT& directionPoint)
+Gost::Gost(const COLORREF mainColor, const COLORREF fearColor, const POINT& position, const POINT& retreatPoint) : 
+DinamicSprite(mainColor, position, SPRITE_GOST),
+fearColor_(fearColor), retreatPoint_(retreatPoint), fear_(false), mode_(GostMode::ATTACK), directionPoint_(getPacManStartPosition()) {}
+int Gost::distanse(const POINT& position, const POINT& directionPoint)
 {
 	return (position.x - directionPoint.x) * (position.x - directionPoint.x) + (position.y - directionPoint.y) * (position.y - directionPoint.y);
 }
-const POINT Gost::getPoint(const Direction direction) const
+POINT Gost::getPoint(const Direction direction) const
 {
 	POINT point = point_;
 	switch (direction)
@@ -45,7 +46,7 @@ const POINT Gost::getPoint(const Direction direction) const
 	}
 	return point;
 }
-void Gost::setMode(GostMode mode)
+void Gost::setMode(const GostMode mode)
 {
 	if (mode == GostMode::FEAR) direction_ = (Direction)(((int)direction_ + getDirectionCount() / 2) % getDirectionCount()); // Reverse direction
 	mode_ = mode;
@@ -56,9 +57,15 @@ void Gost::setFear(const bool fear)
 }
 void Gost::updateSample()
 {
-	initializeSample(SPRITE_GOST);
+	for (int i = 0; i < size_; i++)
+	{
+		for (int j = 0; j < size_; j++)
+		{
+			sample_[i][j] = ((true == SPRITE_GOST[i * size_ + j]) ? ((true == fear_)? fearColor_ : mainColor_) : backgroundColor_);
+		}
+	}
 }
-std::shared_ptr<Gost> Gost::createGost(const GostType type)
+const std::shared_ptr<Gost> Gost::createGost(const GostType type)
 {
 	std::shared_ptr<Gost> gost = nullptr;
 	switch (type)
@@ -84,19 +91,11 @@ std::shared_ptr<Gost> Gost::createGost(const GostType type)
 		break;
 	}
 	default:
+	{
 		break;
 	}
-	return gost;
-}
-void Gost::initializeSample(const bool sample[])
-{
-	for (int i = 0; i < size_; i++)
-	{
-		for (int j = 0; j < size_; j++)
-		{
-			sample_[i][j] = ((true == sample[i * size_ + j]) ? ((false == fear_)? mainColor_ : fearColor_) : backgroundColor_);
-		}
 	}
+	return gost;
 }
 void Gost::decision(const std::vector<Direction> & directions, const POINT& directionPoint)
 {
@@ -149,24 +148,23 @@ void Gost::choiseDirection(bool ways[4])
 		case GostMode::ATTACK:
 		{
 			decision(directions, directionPoint_);
-			return;
+			break;
 		}
 		case GostMode::FEAR:
 		{
 			std::srand(time(0));
 			direction_ = directions[rand() % directions.size()];
-			return;
+			break;
 		}
 		case GostMode::RETREAT:
 		{
 			decision(directions, retreatPoint_);
-			return;
+			break;
+		}
+		default:
+		{
+			break;
 		}
 		}
 	}
-}
-void Gost::setReadyPosition()
-{
-	point_ = getCastReadyPosition();
-	direction_ = LEFT;
 }

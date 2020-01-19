@@ -40,11 +40,13 @@
     <ClInclude Include="Code\Headers\Game.h" />
     <ClInclude Include="Code\Headers\Gost.h" />
     <ClInclude Include="Code\Headers\Inky.h" />
-    <ClInclude Include="Code\Headers\ISprite.h" />
     <ClInclude Include="Code\Headers\MapConstants.h" />
     <ClInclude Include="Code\Headers\PacMan.h" />
     <ClInclude Include="Code\Headers\Pinky.h" />
     <ClInclude Include="Code\Headers\StaticSprite.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="SchoreList.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

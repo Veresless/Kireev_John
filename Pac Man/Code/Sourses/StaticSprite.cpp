@@ -1,14 +1,17 @@
 #include "../Headers/StaticSprite.h"
 
-StaticSprite::StaticSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]) :
+StaticSprite::StaticSprite(const StaticSpriteType type, const COLORREF mainColor, const bool sample[]) :
 	size_(getSize()), type_(type), mainColor_(mainColor), backgroundColor_(getBackgroundColor())
 {
 	sample_ = std::unique_ptr<std::unique_ptr<COLORREF[]>[]>(new std::unique_ptr<COLORREF[]>[size_]);
 	for (int i = 0; i < size_; i++)
 	{
 		sample_[i] = std::unique_ptr<COLORREF[]>(new COLORREF[size_]);
+		for (int j = 0; j < size_; j++)
+		{
+			sample_[i][j] = ((true == sample[i * size_ + j]) ? mainColor_ : backgroundColor_);
+		}
 	}
-	initializeSample(sample);
 }
 void StaticSprite::printOn(const int x, const int y, const HDC hdc) const
 {
@@ -22,17 +25,7 @@ void StaticSprite::printOn(const int x, const int y, const HDC hdc) const
 		}
 	}
 }
-void StaticSprite::initializeSample(const bool sample[])
-{
-	for (int i = 0; i < size_; i++)
-	{
-		for (int j = 0; j < size_; j++)
-		{
-			sample_[i][j] = ((true == sample[i * size_ + j]) ? mainColor_ : backgroundColor_);
-		}
-	}
-}
-const std::shared_ptr<StaticSprite> const StaticSprite::createSprite(const SpriteType type, const bool sample[])
+const std::shared_ptr<StaticSprite> const StaticSprite::createSprite(const StaticSpriteType type, const bool sample[])
 {
 	COLORREF mainColor;
 	switch (type)
@@ -50,4 +43,3 @@ const std::shared_ptr<StaticSprite> const StaticSprite::createSprite(const Sprit
 	}
 	return std::shared_ptr<StaticSprite>(new StaticSprite(type, mainColor, sample));
 }
-

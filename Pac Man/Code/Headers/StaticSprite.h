@@ -1,28 +1,33 @@
 #ifndef H_STATIC_SPRITE
 #define H_STATIC_SPRITE
 
-#include "ISprite.h"
+#include <windows.h>
+#include <memory>
 
-class StaticSprite : public ISprite
+#include "Constants.h"
+#include "MapConstants.h"
+
+typedef std::unique_ptr<std::unique_ptr<COLORREF[]>[]> COLOR_MATRIX;
+
+class StaticSprite
 {
 public:
-	StaticSprite(const SpriteType type, const COLORREF mainColor, const bool sample[]);
-	inline const SpriteType getType() const override;
+	StaticSprite(const StaticSpriteType type, const COLORREF mainColor, const bool sample[]);
+	inline StaticSpriteType getType() const;
 	void printOn(const int x, const int y, const HDC hdc) const;
-	const static std::shared_ptr<StaticSprite> const createSprite(const SpriteType type, const bool sample[]);
-protected:
-	virtual void initializeSample(const bool sample[]) override;
+	const static std::shared_ptr<StaticSprite> const createSprite(const StaticSpriteType type, const bool sample[]);
+	virtual ~StaticSprite() {};
 private:
 	StaticSprite(StaticSprite const& sprite);
 	StaticSprite(StaticSprite const&& sprite);
 protected:
 	const int size_;
-	const SpriteType type_;
+	const StaticSpriteType type_;
 	COLOR_MATRIX sample_;
 	const COLORREF mainColor_;
 	const COLORREF backgroundColor_;
 };
-inline const SpriteType StaticSprite::getType() const
+inline StaticSpriteType StaticSprite::getType() const
 {
 	return type_;
 }

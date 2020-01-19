@@ -7,7 +7,6 @@ class Inky : public Gost
 {
 public:
 	Inky();
-	virtual void setStartPosition() override;
 	virtual void setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky) override;
 private:
 	Inky(Inky const& inky);

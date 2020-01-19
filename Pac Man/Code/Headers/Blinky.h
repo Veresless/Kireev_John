@@ -7,7 +7,6 @@ class Blinky : public Gost
 {
 public:
 	Blinky();
-	virtual void setStartPosition() override;
 	virtual void setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky) override;
 private:
 	Blinky(Blinky const& blinky);

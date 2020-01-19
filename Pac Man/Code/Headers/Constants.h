@@ -3,253 +3,260 @@
 
 #include <windows.h>
 
-inline const int getHorizontal() 
+inline int getHorizontal() 
 {
 	return 28;
 }
-inline const int getVertical()
+inline int getVertical()
 {
 	return 36;
 }
-inline const int getSize() 
+inline int getSize() 
 {
 	 return 8;
 }
-
-inline const int getLowSpeed()
+inline int getLowSpeed()
 {
 	return 1;
 }
-inline const int getMiddleSpeed()
+inline int getMiddleSpeed()
 {
 	return 2;
 }
-inline const int getHighSpeed()
+inline int getHighSpeed()
 {
 	return 4;
 }
-inline const POINT getCastReadyPosition()
+inline POINT getCastReadyPosition()
 {
 	return { 13 * getSize() + getSize() / 2, 14 * getSize() };
 }
-inline const POINT getBlinkyStartPosition()
+inline POINT getBlinkyStartPosition()
 {
 	return { 13 * getSize() + getSize() / 2, 14 * getSize() };
 }
-inline const POINT getPinkyStartPosition()
+inline POINT getPinkyStartPosition()
 {
 	return { 13 * getSize() + getSize() / 2, 17 * getSize() };
 }
-inline const POINT getInkyStartPosition()
+inline POINT getInkyStartPosition()
 {
 	return { 11 * getSize() + getSize() / 2, 17 * getSize() };
 }
-inline const POINT getClydeStartPosition()
+inline POINT getClydeStartPosition()
 {
 	return { 15 * getSize() + getSize() / 2, 17 * getSize() };
 }
-inline const int getPinkyDistanse()
+inline int getInkyDistanse()
+{
+	return 2;
+}
+inline int getPinkyDistanse()
 {
 	return 4;
 }
-inline const int getClydeDistanse()
+inline int getClydeDistanse()
 {
 	return 8;
 }
-inline const POINT getBlinkyRetreatPoint()
+inline POINT getBlinkyRetreatPoint()
 {
 	return { 25 * getSize(), 0 };
 }
-inline const POINT getPinkyRetreatPoint()
+inline POINT getPinkyRetreatPoint()
 {
 	return { 2 * getSize(), 0 };
 }
-inline const POINT getInkyRetreatPoint()
+inline POINT getInkyRetreatPoint()
 {
 	return { 27 * getSize(), 35 * getSize() };
 }
-inline const POINT getClydeRetreatPoint()
+inline POINT getClydeRetreatPoint()
 {
 	return { 0, 35 * getSize() };
 }
-inline const POINT getPacManStartPosition()
+inline POINT getPacManStartPosition()
 {
 
 	return { 13 * getSize() + getSize() / 2, 26 * getSize() };
 }
-inline const int getCountDirections()
+inline int getCountDirections()
 {
 	return 4;
 }
-inline const int getMaxCountPoints()
+inline int getMaxCountPoints()
 {
 	return 244;
 }
-inline const int getStartLifes()
+inline int getStartLifes()
 {
 	return 2;
 }
-inline const int getDefaultDeltaTime()
+inline int getStartLevel()
+{
+	return 1;
+}
+inline int getDefaultDeltaTime()
 {
 	return 50;
 }
-inline const int getOneSecond()
+inline int getOneSecond()
 {
 	return 1000;
 }
-inline const int getPointSchore()
+inline int getPointSchore()
 {
 	return 10;
 }
-inline const int getEnergiserSchore()
+inline int getEnergiserSchore()
 {
 	return 50;
 }
-inline const int getLevelWhereCastNotFear()
+inline int getLevelWhereCastNotFear()
 {
 	return 19;
 }
-inline const int getCastDieSchore()
+inline int getCastDieSchore()
 {
 	return 200;
 }
-inline const int getBinaryToBool()
+inline int getBinaryToBool()
 {
 	return 0x8000;
 }
-inline const int getWKey()
+inline int getWKey()
 {
 	return 87;
 }
-inline const int getSKey()
+inline int getSKey()
 {
 	return 83;
 }
-inline const int getDKey()
+inline int getDKey()
 {
 	return 68;
 }
-inline const int getAKey()
+inline int getAKey()
 {
 	return 65;
 }
-inline const int getUpKey()
+inline int getUpKey()
 {
 	return 38;
 }
-inline const int getDownKey()
+inline int getDownKey()
 {
 	return 40;
 }
-inline const int getRightKey()
+inline int getRightKey()
 {
 	return 39;
 }
-inline const int getLeftKey()
+inline int getLeftKey()
 {
 	return 37;
 }
-inline const int getEnterKey()
+inline int getEnterKey()
 {
 	return 13;
 }
-inline const int getEscKey()
+inline int getEscKey()
 {
 	return 27;
 }
-inline const int getTabKey()
+inline int getTabKey()
 {
 	return 9;
 }
-inline const int getFearTime()
+inline int getFearTime()
 {
 	return 10000;
 }
-inline const int getFearDifferenseTime()
+inline int getFearDifferenseTime()
 {
 	return 50;
 }
-inline const int getStartLate()
+inline int getStartLate()
 {
 	return 5000;
 }
-inline const int getRetreatMaxTime()
+inline int getRetreatMaxTime()
 {
 	return 7000;
 }
-inline const int getRetreatMinTime()
+inline int getRetreatMinTime()
 {
 	return 5000;
 }
-inline const int getAttackTime()
+inline int getAttackTime()
 {
 	return 20000;
 }
-inline const int getFirstChangeLevel()
+inline int getFirstChangeLevel()
 {
 	return 2;
 }
-inline const int getSecondChangeLevel()
+inline int getSecondChangeLevel()
 {
 	return 5;
 }
-inline const int getThirdChangeLevel()
+inline int getThirdChangeLevel()
 {
 	return 19;
 }
-inline const int getLastChangeLevel()
+inline int getLastChangeLevel()
 {
 	return 21;
 }
-inline const int getLongAttackTime()
+inline int getLongAttackTime()
 {
 	return 1033000;
 }
-inline const int getLargeAttackTime()
+inline int getLargeAttackTime()
 {
 	return 1037000;
 }
-inline const int getSmalestRetreatTime()
+inline int getSmalestRetreatTime()
 {
 	return 100 / 6;
 }
-inline const int getPinkyStartTime()
+inline int getPinkyStartTime()
 {
 	return 5000;
 }
-inline const int getInkyStartTime()
+inline int getInkyStartTime()
 {
 	return 7000;
 }
-inline const int getClydeStartTime()
+inline int getClydeStartTime()
 {
 	return 9000;
 }
-inline const int getInkyPointCountCondition()
+inline int getInkyPointCountCondition()
 {
 	return 30;
 }
-inline const int getClydePointCountCondition()
+inline int getClydePointCountCondition()
 {
 	return getMaxCountPoints() / 3;
 }
-inline const int getCountStatisticStrings()
+inline int getCountStatisticStrings()
 {
 	return 2;
 }
-inline const POINT getFirstSpecialPoint()
+inline POINT getFirstSpecialPoint()
 {
 	return {12, 14};
 }
-inline const POINT getSecondSpecialPoint()
+inline POINT getSecondSpecialPoint()
 {
 	return {15, 14};
 }
-inline const POINT getThirdSpecialPoint()
+inline POINT getThirdSpecialPoint()
 {
 	return {12 , 26};
 }
-inline const POINT getFourthSpecialPoint()
+inline POINT getFourthSpecialPoint()
 {
 	return {15 , 26};
 }
@@ -257,7 +264,7 @@ inline const char* getPath()
 {
 	return "SchoreList.txt";
 }
-inline const int getDelay()
+inline int getDelay()
 {
 	return 500;
 }

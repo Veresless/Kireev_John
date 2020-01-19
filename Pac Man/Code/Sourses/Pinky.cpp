@@ -1,13 +1,6 @@
 #include "../Headers/Pinky.h"
 
-void Pinky::setStartPosition()
-{
-	point_ = getPinkyStartPosition();
-}
-Pinky::Pinky() : Gost(getPink(), getBlue(), getPinkyRetreatPoint())
-{
-	setStartPosition();
-}
+Pinky::Pinky() : Gost(getPink(), getBlue(), getPinkyStartPosition(), getPinkyRetreatPoint()) {}
 void Pinky::setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky)
 {
 	const int count = getPinkyDistanse();
@@ -17,27 +10,29 @@ void Pinky::setDirectionPoint(const POINT& point, const Direction direction, con
 	{
 		directionPoint_.x = point.x;
 		directionPoint_.y = point.y - count * size_;
-		return;
+		break;
 	}
 	case 1:
 	{
 		directionPoint_.x = point.x - count * size_;
 		directionPoint_.y = point.y;
-		return;
+		break;
 	}
 	case 2:
 	{
 		directionPoint_.x = point.x;
 		directionPoint_.y = point.y + count * size_;
-		return;
+		break;
 	}
 	case 3:
 	{
 		directionPoint_.x = point.x + count * size_;
 		directionPoint_.y = point.y;
-		return;
+		break;
 	}
 	default:
-		return;
+	{
+		break;
+	}
 	}
 }

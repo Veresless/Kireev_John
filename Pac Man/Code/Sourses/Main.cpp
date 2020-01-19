@@ -8,26 +8,26 @@
 const bool Menu()
 {
 	bool infitity = true;
-	bool rezult = false;
-	while (infitity)
+	bool rezult = true;
+	while (true == infitity)
 	{
 		std::cout << "To Start Game press Enter\nTo show Schore List press Tab\nTo Exit Game press Esc";
 		bool smallInfitity = true;
-		while (smallInfitity)
+		while (true == smallInfitity)
 		{
-			if ((GetKeyState(getEscKey()) & getBinaryToBool()) != 0)
+			if (0 != (GetKeyState(getEscKey()) & getBinaryToBool()))
 			{
 				infitity = false;
 				smallInfitity = false;
 				rezult = false;
 			}
-			if ((GetKeyState(getTabKey()) & getBinaryToBool()) != 0)
+			if (0 != (GetKeyState(getTabKey()) & getBinaryToBool()))
 			{
 				system("cls");
 				std::cout << "Press 'Esc' to back in menu.\n";
 				std::ifstream in(getPath());
 				std::string line;
-				if (in.is_open())
+				if (true == in.is_open())
 				{
 					while (getline(in, line))
 					{
@@ -35,12 +35,12 @@ const bool Menu()
 					}
 				}
 				in.close();
-				while ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
+				while (0 == (GetKeyState(getEscKey()) & getBinaryToBool()));
 				Sleep(getDelay());
 				system("cls");
 				std::cout << "To Start Game press Enter\nTo show Schore List press Tab\nTo Exit Game press Esc";
 			}
-			if ((GetKeyState(getEnterKey()) & getBinaryToBool()) != 0)
+			if (0 != (GetKeyState(getEnterKey()) & getBinaryToBool()))
 			{
 				infitity = false;
 				smallInfitity = false;
@@ -48,15 +48,15 @@ const bool Menu()
 			}
 		}
 	}
-		return rezult;
+	return rezult;
 }
 
 int main()
 {
-	if (Menu())
+	if (true == Menu())
 	{
 		bool infitity = true;
-		while (infitity)
+		while (true == infitity)
 		{
 			system("cls");
 			std::string name;
@@ -65,14 +65,14 @@ int main()
 			Game game;
 			const int schore = game.run();
 			std::ofstream out(getPath(), std::ios::app);
-			if (out.is_open())
+			if (true == out.is_open())
 			{
 				out << name << ":" << schore << '\n';
 			}
 			out.close();
 			system("cls");
 			std::cout << "Game Over!\nYour Schore:" << schore << "\nPress 'Esc' to back in menu";
-			while ((GetKeyState(getEscKey()) & getBinaryToBool()) == 0);
+			while (0 == (GetKeyState(getEscKey()) & getBinaryToBool()));
 			system("cls");
 			Sleep(getDelay());
 			infitity = Menu();
