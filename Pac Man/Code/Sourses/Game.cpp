@@ -34,7 +34,7 @@ int Game::run()
 			field_.setHardSpeed();
 		}
 		clearConsole(getHorizontal(), getCountStatisticStrings());
-		std::cout << "Press 'Enter' to continue...";
+		std::cout << "Press 'Enter' to play...";
 		while (0 == (GetKeyState(getEnterKey()) & getBinaryToBool()));
 		clearConsole(getHorizontal(), 1);
 		std::cout << "3";
@@ -183,19 +183,19 @@ void Game::updateStatistic() const
 }
 void Game::pacManMovement()
 {
-	if ((GetKeyState(getWKey()) & getBinaryToBool()) || (GetKeyState(getUpKey()) & getBinaryToBool())) // W w and UP
+	if ((GetKeyState(getWKey()) & getBinaryToBool()) || (GetKeyState(getUpKey()) & getBinaryToBool()))
 	{
 		field_.turnPacMan(UP);
 	}
-	else if ((GetKeyState(getDKey()) & getBinaryToBool()) || (GetKeyState(getRightKey()) & getBinaryToBool())) // D d and RIGHT
+	else if ((GetKeyState(getDKey()) & getBinaryToBool()) || (GetKeyState(getRightKey()) & getBinaryToBool()))
 	{
 		field_.turnPacMan(RIGHT);
 	}
-	else if ((GetKeyState(getSKey()) & getBinaryToBool()) || (GetKeyState(getDownKey()) & getBinaryToBool())) // S s and DOWN
+	else if ((GetKeyState(getSKey()) & getBinaryToBool()) || (GetKeyState(getDownKey()) & getBinaryToBool()))
 	{
 		field_.turnPacMan(DOWN);
 	}
-	else if ((GetKeyState(getAKey()) & getBinaryToBool()) || (GetKeyState(getLeftKey()) & getBinaryToBool())) // A a and LEFT
+	else if ((GetKeyState(getAKey()) & getBinaryToBool()) || (GetKeyState(getLeftKey()) & getBinaryToBool()))
 	{
 		field_.turnPacMan(LEFT);
 	}
@@ -363,12 +363,13 @@ void Game::loadLevel()
 }
 bool Game::levelUp()
 {
+	bool rezult = false;
 	if (countEatenPoints_ == getMaxCountPoints())
 	{
 		level_++;
 		countEatenPoints_ = 0;
-		return true;
+		rezult = true;
 	}
-	return false;
+	return rezult;
 }
 
