@@ -70,30 +70,35 @@ const std::shared_ptr<Gost> const Field::getGost(const GostType type) const
 }
 void Field::setBlinkyReady()
 {
-	eraseDinamic(blinky_->getPosition());
-	blinky_->setPosition(getCastReadyPosition());
+	POINT position = blinky_->getPosition();
+	blinky_->setPosition(getGostReadyPosition());
 	blinky_->setDirection(LEFT);
+	eraseDinamic(position);
 	blinkyReady = true;
+	
 }
 void Field::setPinkyReady()
 {
-	eraseDinamic(pinky_->getPosition());
-	pinky_->setPosition(getCastReadyPosition());
+	POINT position = pinky_->getPosition();
+	pinky_->setPosition(getGostReadyPosition());
 	pinky_->setDirection(LEFT);
+	eraseDinamic(position);
 	pinkyReady = true;
 }
 void Field::setInkyReady()
 {
-	eraseDinamic(inky_->getPosition());
-	inky_->setPosition(getCastReadyPosition());
+	POINT position = inky_->getPosition();
+	inky_->setPosition(getGostReadyPosition());
 	inky_->setDirection(LEFT);
+	eraseDinamic(position);
 	inkyReady = true;
 }
 void Field::setClydeReady()
 {
-	eraseDinamic(clyde_->getPosition());
-	clyde_->setPosition(getCastReadyPosition());
+	POINT position = clyde_->getPosition();
+	clyde_->setPosition(getGostReadyPosition());
 	clyde_->setDirection(LEFT);
+	eraseDinamic(position);
 	clydeReady = true;
 }
 void Field::setEasySpeed()
@@ -491,7 +496,7 @@ void Field::eraseDinamic(const POINT& Point)
 		}
 		else
 		{
-			const int xNew = (x+1) % getHorizontal();
+			const int xNew = (x + 1) % getHorizontal();
 			level_[y][x]->printOn(x, y, hdc_);
 			level_[y][xNew]->printOn(xNew, y, hdc_);
 		}

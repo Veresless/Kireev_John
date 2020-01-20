@@ -32,10 +32,63 @@ enum Direction
 	DOWN,
 	RIGHT
 };
-inline int getDirectionCount()
+inline POINT getGostReadyPosition()
 {
-	return 4;
+	return { 13 * getSize() + getSize() / 2, 16 * getSize() };
 }
+inline POINT getBlinkyStartPosition()
+{
+	return { 13 * getSize() + getSize() / 2, 16 * getSize() };
+}
+inline POINT getPinkyStartPosition()
+{
+	return { 13 * getSize() + getSize() / 2, 19 * getSize() };
+}
+inline POINT getInkyStartPosition()
+{
+	return { 11 * getSize() + getSize() / 2, 19 * getSize() };
+}
+inline POINT getClydeStartPosition()
+{
+	return { 15 * getSize() + getSize() / 2, 19 * getSize() };
+}
+inline POINT getBlinkyRetreatPoint()
+{
+	return { 25 * getSize(), 2 * getSize() };
+}
+inline POINT getPinkyRetreatPoint()
+{
+	return { 2 * getSize(), 2 * getSize() };
+}
+inline POINT getInkyRetreatPoint()
+{
+	return { 27 * getSize(), 37 * getSize() };
+}
+inline POINT getClydeRetreatPoint()
+{
+	return { 0, 37 * getSize() };
+}
+inline POINT getPacManStartPosition()
+{
+	return { 13 * getSize() + getSize() / 2, 28 * getSize() };
+}
+inline POINT getFirstSpecialPoint()
+{
+	return { 12, 16 };
+}
+inline POINT getSecondSpecialPoint()
+{
+	return { 15, 16 };
+}
+inline POINT getThirdSpecialPoint()
+{
+	return { 12 , 28 };
+}
+inline POINT getFourthSpecialPoint()
+{
+	return { 15 , 28 };
+}
+
 const bool SPRITE_EMPTY[] = {		0, 0, 0, 0, 0, 0, 0, 0,
 									0, 0, 0, 0, 0, 0, 0, 0,
 									0, 0, 0, 0, 0, 0, 0, 0,
@@ -138,6 +191,8 @@ const std::string MAP[] = {
 					"                            ",
 					"                            ",
 					"                            ",
+					"                            ",
+					"                            ",
 					"F------------TF------------T",
 					"|............||............|",
 					"|.F--T.F---T.||.F---T.F--T.|",
@@ -168,9 +223,7 @@ const std::string MAP[] = {
 					"|.F----JL--T.||.F--JL----T.|",
 					"|.L--------J.LJ.L--------J.|",
 					"|..........................|",
-					"L--------------------------J",
-					"                            ",
-					"                            " };
+					"L--------------------------J" };
 const char EMPTY_CHAR = ' ';
 const char WALL_HORIZONTAL_CHAR = '-';
 const char WALL_VERTICAL_CHAR = '|';

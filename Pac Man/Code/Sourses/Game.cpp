@@ -1,17 +1,26 @@
 #include <iostream>
 #include <string>
-#include <future>
 
 #include "../Headers/Game.h"
 
 Game::Game(): lifes_(getStartLifes()), deltaTime_(getDefaultDeltaTime()), level_(getStartLevel()),
-schore_(0), gostDieCount_(0), countEatenPoints_(0), energiserTime_(0), energiserTimeOn_(false), live_(true){}
+schore_(0), gostDieCount_(0), countEatenPoints_(0), energiserTime_(0), energiserTimeOn_(true), live_(true){}
 int Game::run()
 {
 	bool run = true;
 	loadLevel();
 	while (run)
 	{
+		const int fearTime = getFearTime() - level_ * getFearDifferenseTime();
+		const int firstWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime());
+		const int firstWaveAttack = getAttackTime() + firstWaveRetreat;
+		const int secondWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + firstWaveAttack;
+		const int secondWaveAttack = getAttackTime() + secondWaveRetreat;
+		const int thirdWaveRetreat = getRetreatMinTime() + secondWaveAttack;
+		const int thirdWaveAttack = ((level_ < getFirstChangeLevel()) ? getAttackTime() :
+			(level_ < getSecondChangeLevel()) ? getLongAttackTime() : getLargeAttackTime()) + thirdWaveRetreat;
+		const int fourthWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMinTime() : getSmalestRetreatTime()) + thirdWaveAttack;
+		WaveTime waveTime(fearTime, firstWaveRetreat, firstWaveAttack, secondWaveRetreat, secondWaveAttack, thirdWaveRetreat, thirdWaveAttack, fourthWaveRetreat);
 		if (level_ < getSecondChangeLevel())
 		{
 			field_.setEasySpeed();
@@ -24,12 +33,10 @@ int Game::run()
 		{
 			field_.setHardSpeed();
 		}
-		live_ = true;
 		clearConsole(getHorizontal(), getCountStatisticStrings());
 		std::cout << "Press 'Enter' to continue...";
 		while (0 == (GetKeyState(getEnterKey()) & getBinaryToBool()));
 		clearConsole(getHorizontal(), 1);
-		auto future = std::async(std::launch::async, [&] {modeTimer(); });
 		std::cout << "3";
 		Sleep(getOneSecond());
 		std::cout << ", 2";
@@ -37,20 +44,25 @@ int Game::run()
 		std::cout << ", 1...\r";
 		Sleep(getOneSecond());
 		std::cout << "Level:\tLifes:\tSchore:\n";
+		ULONGLONG startTime = GetTickCount64();
 		while (live_ && run)
 		{
+			ULONGLONG start = GetTickCount64();
 			live_ = run = exit();
-			ULONGLONG StartTime = GetTickCount64();
+			die();
+			modeTimer(waveTime, startTime);
 			pacManEat();
 			updateStatistic();
-			if (levelUp()) break;
+			if (true == levelUp())
+			{
+				break;
+			}
 			pacManMovement();
 			gostMovement();
 			field_.moveAllDinamic();
-			die();
-			ULONGLONG StopTime = GetTickCount64();
-			ULONGLONG Time = deltaTime_ - (StopTime - StartTime) % deltaTime_;
-			Sleep(Time);
+			ULONGLONG stop = GetTickCount64();
+			ULONGLONG time = (((stop - start) > deltaTime_)? 0 : deltaTime_ - (stop - start));
+			Sleep(time);
 		}
 		if (!live_) 
 		{
@@ -60,17 +72,16 @@ int Game::run()
 			}
 			else
 			{
+				live_ = true;
 				field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
 			}
 		}
 		else
 		{
-			live_ = false;
 			field_.normalGost();
 			field_.resetLevel();
 			field_.blinkyReady = field_.pinkyReady = field_.inkyReady = field_.clydeReady = false;
 		}
-
 	}
 	return schore_;
 }
@@ -89,7 +100,7 @@ void Game::clearConsole(const int x, const int y) const
 	std::string spase(x, ' ');
 	for (int i = 0; i < y; i++)
 	{
-		std::cout << spase << '\n';
+		std::cout << spase;
 	}
 	goToXY(0, 0);
 }
@@ -276,38 +287,35 @@ void Game::die()
 		else pacManDie();
 	}
 }
-void Game::modeTimer()
+void Game::modeTimer(const WaveTime& waveTime, ULONGLONG& startTime )
 {
-	int fearTime =getFearTime() - level_ * getFearDifferenseTime();
-	int firstWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + getStartLate();
-	int firstWaveAttack = getAttackTime() + firstWaveRetreat;
-	int secondWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMaxTime() : getRetreatMinTime()) + firstWaveAttack;
-	int secondWaveAttack = getAttackTime() + secondWaveRetreat;
-	int thirdWaveRetreat = getRetreatMinTime() + secondWaveAttack;
-	int thirdWaveAttack = ((level_ < getFirstChangeLevel())? getAttackTime() :
-		(level_ < getSecondChangeLevel())? getLongAttackTime() : getLargeAttackTime()) + thirdWaveRetreat;
-	int fourthWaveRetreat = ((level_ < getSecondChangeLevel()) ? getRetreatMinTime() : getSmalestRetreatTime()) + thirdWaveAttack;
-	energiserTimeOn_ = true;
-	ULONGLONG deltaTime = 0;
-	ULONGLONG startTime = GetTickCount64();
-	while (live_)
-	{
-		ULONGLONG start = GetTickCount64();
 		GostMode mode = field_.getGostMode();
-		if (!field_.blinkyReady) field_.setBlinkyReady();
-		if (!field_.pinkyReady && GetTickCount64() - startTime >= getPinkyStartTime()) field_.setPinkyReady();
-		if (!field_.inkyReady && countEatenPoints_ >= getInkyPointCountCondition() &&
-			GetTickCount64() - startTime >= getInkyStartTime()) field_.setInkyReady();
-		if (!field_.clydeReady && countEatenPoints_ >= getClydePointCountCondition() &&
-			GetTickCount64() - startTime >= getClydeStartTime()) field_.setClydeReady();
+		if (true != field_.blinkyReady)
+		{
+			field_.setBlinkyReady();
+		}
+		if (true != field_.pinkyReady && GetTickCount64() - startTime >= getPinkyStartTime())
+		{
+			field_.setPinkyReady();
+		}
+		if (true != field_.inkyReady && countEatenPoints_ >= getInkyPointCountCondition() &&
+			GetTickCount64() - startTime >= getInkyStartTime())
+		{
+			field_.setInkyReady();
+		}
+		if (true != field_.clydeReady && countEatenPoints_ >= getClydePointCountCondition() &&
+			GetTickCount64() - startTime >= getClydeStartTime())
+		{
+			field_.setClydeReady();
+		}
 		if (mode == GostMode::FEAR)
 		{
-			if (!energiserTimeOn_)
+			if (true != energiserTimeOn_)
 			{
 				energiserTimeOn_ = true;
-				startTime += fearTime;
+				startTime += waveTime.fearTime;
 			}
-			if (GetTickCount64() - energiserTime_ >= fearTime)
+			if (GetTickCount64() - energiserTime_ >= waveTime.fearTime)
 			{
 				field_.normalGost();
 			}
@@ -315,16 +323,38 @@ void Game::modeTimer()
 		else
 		{
 			GostMode NewCastMode = GostMode::RETREAT;
-			if (GetTickCount64() - startTime >= fourthWaveRetreat) NewCastMode = GostMode::ATTACK;
-			else if (GetTickCount64() - startTime >= thirdWaveAttack) NewCastMode = GostMode::RETREAT;
-			else if (GetTickCount64() - startTime >= thirdWaveRetreat) NewCastMode = GostMode::ATTACK;
-			else if (GetTickCount64() - startTime >= secondWaveAttack) NewCastMode = GostMode::RETREAT;
-			else if (GetTickCount64() - startTime >= secondWaveRetreat) NewCastMode = GostMode::ATTACK;
-			else if (GetTickCount64() - startTime >= firstWaveAttack) NewCastMode = GostMode::RETREAT;
-			else if (GetTickCount64() - startTime >= firstWaveRetreat) NewCastMode = GostMode::ATTACK;
-			if (NewCastMode != mode) field_.setGostMode(NewCastMode);
-		}
-		deltaTime = GetTickCount64() - start;
+			if (GetTickCount64() - startTime >= waveTime.fourthWaveRetreat)
+			{
+				NewCastMode = GostMode::ATTACK;
+			}
+			else if (GetTickCount64() - startTime >= waveTime.thirdWaveAttack)
+			{
+				NewCastMode = GostMode::RETREAT;
+			}
+			else if (GetTickCount64() - startTime >= waveTime.thirdWaveRetreat)
+			{
+				NewCastMode = GostMode::ATTACK;
+			}
+			else if (GetTickCount64() - startTime >= waveTime.secondWaveAttack)
+			{
+				NewCastMode = GostMode::RETREAT;
+			}
+			else if (GetTickCount64() - startTime >= waveTime.secondWaveRetreat)
+			{
+				NewCastMode = GostMode::ATTACK;
+			}
+			else if (GetTickCount64() - startTime >= waveTime.firstWaveAttack)
+			{
+				NewCastMode = GostMode::RETREAT;
+			}
+			else if (GetTickCount64() - startTime >= waveTime.firstWaveRetreat)
+			{
+				NewCastMode = GostMode::ATTACK;
+			}
+			if (NewCastMode != mode)
+			{
+				field_.setGostMode(NewCastMode);
+			}
 	}
 }
 void Game::loadLevel()

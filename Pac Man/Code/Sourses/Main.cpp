@@ -11,7 +11,7 @@ const bool Menu()
 	bool rezult = true;
 	while (true == infitity)
 	{
-		std::cout << "To Start Game press Enter\nTo show Schore List press Tab\nTo Exit Game press Esc";
+		std::cout << "To Start Game press Enter\nTo Schore List press Tab\nTo Exit Game press Esc";
 		bool smallInfitity = true;
 		while (true == smallInfitity)
 		{
@@ -38,7 +38,7 @@ const bool Menu()
 				while (0 == (GetKeyState(getEscKey()) & getBinaryToBool()));
 				Sleep(getDelay());
 				system("cls");
-				std::cout << "To Start Game press Enter\nTo show Schore List press Tab\nTo Exit Game press Esc";
+				std::cout << "To Start Game press Enter\nTo Schore List press Tab\nTo Exit Game press Esc";
 			}
 			if (0 != (GetKeyState(getEnterKey()) & getBinaryToBool()))
 			{
@@ -53,6 +53,15 @@ const bool Menu()
 
 int main()
 {
+	CONSOLE_FONT_INFOEX fontInfo;
+	fontInfo.cbSize = sizeof(fontInfo);
+	GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &fontInfo);
+	fontInfo.dwFontSize.X = getFontSizeX();
+	fontInfo.dwFontSize.Y = getFontSizeY();
+	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &fontInfo);
+	std::string fontSize = "mode con lines=" + std::to_string(getVertical() * getSize() / getFontSizeY()) +
+		" cols=" + std::to_string(getHorizontal() * getSize() / getFontSizeX());
+	system(fontSize.c_str());
 	if (true == Menu())
 	{
 		bool infitity = true;

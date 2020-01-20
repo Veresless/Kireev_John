@@ -44,6 +44,7 @@
     <ClInclude Include="Code\Headers\PacMan.h" />
     <ClInclude Include="Code\Headers\Pinky.h" />
     <ClInclude Include="Code\Headers\StaticSprite.h" />
+    <ClInclude Include="Code\Headers\WaveTime.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="SchoreList.txt" />

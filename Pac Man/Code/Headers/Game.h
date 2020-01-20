@@ -2,6 +2,7 @@
 #define H_GAME
 
 #include "Field.h"
+#include "WaveTime.h"
 
 class Game {
 public:
@@ -18,7 +19,7 @@ private:
 	void pacManEat();
 	void pacManDie();
 	void die();
-	void modeTimer();
+	void modeTimer(const WaveTime& waveTime, ULONGLONG& startTime);
 	void loadLevel();
 	bool levelUp();
 private:

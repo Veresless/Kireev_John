@@ -3,6 +3,18 @@
 
 #include <windows.h>
 
+inline const char* getPath()
+{
+	return "SchoreList.txt";
+}
+inline int getFontSizeX()
+{
+	return 8;
+}
+inline int getFontSizeY()
+{
+	return 12;
+}
 inline int getHorizontal() 
 {
 	return 28;
@@ -27,26 +39,6 @@ inline int getHighSpeed()
 {
 	return 4;
 }
-inline POINT getCastReadyPosition()
-{
-	return { 13 * getSize() + getSize() / 2, 14 * getSize() };
-}
-inline POINT getBlinkyStartPosition()
-{
-	return { 13 * getSize() + getSize() / 2, 14 * getSize() };
-}
-inline POINT getPinkyStartPosition()
-{
-	return { 13 * getSize() + getSize() / 2, 17 * getSize() };
-}
-inline POINT getInkyStartPosition()
-{
-	return { 11 * getSize() + getSize() / 2, 17 * getSize() };
-}
-inline POINT getClydeStartPosition()
-{
-	return { 15 * getSize() + getSize() / 2, 17 * getSize() };
-}
 inline int getInkyDistanse()
 {
 	return 2;
@@ -59,26 +51,9 @@ inline int getClydeDistanse()
 {
 	return 8;
 }
-inline POINT getBlinkyRetreatPoint()
+inline int getDirectionCount()
 {
-	return { 25 * getSize(), 0 };
-}
-inline POINT getPinkyRetreatPoint()
-{
-	return { 2 * getSize(), 0 };
-}
-inline POINT getInkyRetreatPoint()
-{
-	return { 27 * getSize(), 35 * getSize() };
-}
-inline POINT getClydeRetreatPoint()
-{
-	return { 0, 35 * getSize() };
-}
-inline POINT getPacManStartPosition()
-{
-
-	return { 13 * getSize() + getSize() / 2, 26 * getSize() };
+	return 4;
 }
 inline int getCountDirections()
 {
@@ -176,10 +151,6 @@ inline int getFearDifferenseTime()
 {
 	return 50;
 }
-inline int getStartLate()
-{
-	return 5000;
-}
 inline int getRetreatMaxTime()
 {
 	return 7000;
@@ -222,15 +193,15 @@ inline int getSmalestRetreatTime()
 }
 inline int getPinkyStartTime()
 {
-	return 5000;
+	return 1000;
 }
 inline int getInkyStartTime()
 {
-	return 7000;
+	return 3000;
 }
 inline int getClydeStartTime()
 {
-	return 9000;
+	return 5000;
 }
 inline int getInkyPointCountCondition()
 {
@@ -243,26 +214,6 @@ inline int getClydePointCountCondition()
 inline int getCountStatisticStrings()
 {
 	return 2;
-}
-inline POINT getFirstSpecialPoint()
-{
-	return {12, 14};
-}
-inline POINT getSecondSpecialPoint()
-{
-	return {15, 14};
-}
-inline POINT getThirdSpecialPoint()
-{
-	return {12 , 26};
-}
-inline POINT getFourthSpecialPoint()
-{
-	return {15 , 26};
-}
-inline const char* getPath()
-{
-	return "SchoreList.txt";
 }
 inline int getDelay()
 {
