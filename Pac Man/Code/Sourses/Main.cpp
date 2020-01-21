@@ -55,10 +55,10 @@ int main()
 {
 	CONSOLE_FONT_INFOEX fontInfo;
 	fontInfo.cbSize = sizeof(fontInfo);
-	GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &fontInfo);
+	GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &fontInfo);
 	fontInfo.dwFontSize.X = getFontSizeX();
 	fontInfo.dwFontSize.Y = getFontSizeY();
-	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &fontInfo);
+	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), false, &fontInfo);
 	std::string fontSize = "mode con lines=" + std::to_string(getVertical() * getSize() / getFontSizeY()) +
 		" cols=" + std::to_string(getHorizontal() * getSize() / getFontSizeX());
 	system(fontSize.c_str());

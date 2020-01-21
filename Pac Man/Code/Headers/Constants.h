@@ -9,11 +9,11 @@ inline const char* getPath()
 }
 inline int getFontSizeX()
 {
-	return 8;
+	return 12;
 }
 inline int getFontSizeY()
 {
-	return 12;
+	return 16;
 }
 inline int getHorizontal() 
 {
@@ -23,21 +23,25 @@ inline int getVertical()
 {
 	return 36;
 }
-inline int getSize() 
+inline int getDinamicSize() 
 {
-	 return 8;
+	 return 16;
+}
+inline int getSize()
+{
+	return 16;
 }
 inline int getLowSpeed()
 {
-	return 1;
+	return 2;
 }
 inline int getMiddleSpeed()
 {
-	return 2;
+	return 4;
 }
 inline int getHighSpeed()
 {
-	return 4;
+	return 8;
 }
 inline int getInkyDistanse()
 {

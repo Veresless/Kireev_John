@@ -225,16 +225,16 @@ void Field::resetDinamic()
 }
 void Field::gostMovement()
 {
-	int size = getSize();
+	const int size = getSize();
 	if (blinkyReady)
 	{
-		POINT position = blinky_->getPosition();
+		const POINT position = blinky_->getPosition();
 		if (position.x % size == 0 && position.y % size == 0)
 		{
 			const int countDirections = getCountDirections();
 			const Direction direction = blinky_->getDirection();
-			const Direction left = (Direction)(((int)direction - 1 + countDirections) % countDirections);
-			const Direction right = (Direction)(((int)direction + 1) % countDirections);
+			const Direction right = (Direction)(((int)direction - 1 + countDirections) % countDirections);
+			const Direction left = (Direction)(((int)direction + 1) % countDirections);
 			if (!checkEmpty(position, direction) || checkEmpty(position, left) || checkEmpty(position, right))
 			{
 				bool ways[4];
@@ -442,7 +442,7 @@ bool Field::checkEmpty(const POINT& position, const Direction direction) const
 	{
 		y += ((position.y % size != 0) ? 0 : - 1) + getVertical();
 		y %= getVertical();
-		StaticSpriteType type = level_[y][x]->getType();
+		const StaticSpriteType type = level_[y][x]->getType();
 		rezult = (position.x % size == 0 && (type == StaticSpriteType::EMPTY || type == StaticSpriteType::SCHORE_POINT || type == StaticSpriteType::ENERGISER));
 		break;
 	}
@@ -450,7 +450,7 @@ bool Field::checkEmpty(const POINT& position, const Direction direction) const
 	{
 		x += 1;
 		x %= getHorizontal();
-		StaticSpriteType type = level_[y][x]->getType();
+		const StaticSpriteType type = level_[y][x]->getType();
 		rezult = (position.y % size == 0 && (type == StaticSpriteType::EMPTY || type == StaticSpriteType::SCHORE_POINT || type == StaticSpriteType::ENERGISER));
 		break;
 	}
@@ -458,7 +458,7 @@ bool Field::checkEmpty(const POINT& position, const Direction direction) const
 	{
 		y += 1;
 		y %= getVertical();
-		StaticSpriteType type = level_[y][x]->getType();
+		const StaticSpriteType type = level_[y][x]->getType();
 		rezult = (position.x % size == 0 && (type == StaticSpriteType::EMPTY || type == StaticSpriteType::SCHORE_POINT || type == StaticSpriteType::ENERGISER));
 		break;
 	}
@@ -466,12 +466,14 @@ bool Field::checkEmpty(const POINT& position, const Direction direction) const
 	{
 		x += ((position.x % size != 0) ? 0 : -1) + getHorizontal();
 		x %= getHorizontal();
-		StaticSpriteType type = level_[y][x]->getType();
+		const StaticSpriteType type = level_[y][x]->getType();
 		rezult = (position.y % size == 0 && (type == StaticSpriteType::EMPTY || type == StaticSpriteType::SCHORE_POINT || type == StaticSpriteType::ENERGISER));
 		break;
 	}
 	default:
+	{
 		break;
+	}
 	}
 	return rezult;
 }
@@ -483,40 +485,21 @@ void Field::moveDinamic(const std::shared_ptr<DinamicSprite> sprite, const POINT
 		sprite->print(hdc_);
 	}
 }
-void Field::eraseDinamic(const POINT& Point)
+void Field::eraseDinamic(const POINT& point)
 {
 	const int size = getSize();
-	const int x = (Point.x / size + getHorizontal())%getHorizontal();
-	const int y = (Point.y / size + getVertical())%getVertical();
-	if (0 == Point.y % size)
+	const int dinamicSize = getDinamicSize();
+	const int height = getVertical() * size;
+	const int width = getHorizontal() * size;
+	const int firstX = point.x - (dinamicSize - size) / 2;
+	const int firstY = point.y - (dinamicSize - size) / 2;
+	for (int j = 0; j < dinamicSize; j++)
 	{
-		if (0 == Point.x % size)
+		for (int i = 0; i < dinamicSize; i++)
 		{
-			level_[y][x]->printOn(x, y, hdc_);
-		}
-		else
-		{
-			const int xNew = (x + 1) % getHorizontal();
-			level_[y][x]->printOn(x, y, hdc_);
-			level_[y][xNew]->printOn(xNew, y, hdc_);
-		}
-	}
-	else
-	{
-		if (0 == Point.x % size)
-		{
-			const int yNew = (y + 1) % getVertical();
-			level_[y][x]->printOn(x, y, hdc_);
-			level_[yNew][x]->printOn(x, yNew, hdc_);
-		}
-		else
-		{
-			const int xNew = (x + 1) % getHorizontal();
-			const int yNew = (y + 1) % getVertical();
-			level_[y][x]->printOn(x, y, hdc_);
-			level_[yNew][x]->printOn(x, yNew, hdc_);
-			level_[y][xNew]->printOn(xNew, y, hdc_);
-			level_[yNew][xNew]->printOn(xNew, yNew, hdc_);
+			const int x = (firstX + i + width) % width;
+			const int y = (firstY + j + height) % height;
+			SetPixel(hdc_, x, y, level_[y / size][x / size]->getColorAt({x % size, y % size}));
 		}
 	}
 }

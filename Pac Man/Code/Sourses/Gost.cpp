@@ -16,27 +16,29 @@ int Gost::distanse(const POINT& position, const POINT& directionPoint)
 }
 POINT Gost::getPoint(const Direction direction) const
 {
+	const int size = getSize();
 	POINT point = point_;
 	switch (direction)
 	{
+		
 	case UP:
 		{
-		point.y -= size_;
+		point.y -= size;
 		break;
 	}
 	case RIGHT:
 	{ 
-		point.x += size_;
+		point.x += size;
 		break;
 	}
 	case DOWN:
 	{
-		point.y += size_;
+		point.y += size;
 		break;
 	}
 	case LEFT:
 	{ 
-		point.x -= size_;
+		point.x -= size;
 		break;
 	}
 	default:

@@ -14,6 +14,7 @@ class StaticSprite
 public:
 	StaticSprite(const StaticSpriteType type, const COLORREF mainColor, const bool sample[]);
 	inline StaticSpriteType getType() const;
+	inline COLORREF getColorAt(const POINT& point) const;
 	void printOn(const int x, const int y, const HDC hdc) const;
 	const static std::shared_ptr<StaticSprite> const createSprite(const StaticSpriteType type, const bool sample[]);
 	virtual ~StaticSprite() {};
@@ -30,5 +31,9 @@ protected:
 inline StaticSpriteType StaticSprite::getType() const
 {
 	return type_;
+}
+inline COLORREF StaticSprite::getColorAt(const POINT& point) const
+{
+	return sample_[point.y][point.x];
 }
 #endif
