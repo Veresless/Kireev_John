@@ -12,7 +12,7 @@ private:
 	void goToXY(const int x, const int y) const;
 	void clearConsole(const int x, const int y) const;
 	bool exit() const;
-	bool checkPosition(const std::shared_ptr<PacMan> const pacMan, const std::shared_ptr<Gost> const gost) const;
+	bool checkPosition(const std::shared_ptr<PacMan> pacMan, const std::shared_ptr<Gost> gost) const;
 	void updateStatistic()const;
 	void pacManMovement();
 	void gostMovement();

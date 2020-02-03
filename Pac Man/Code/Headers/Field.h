@@ -13,8 +13,8 @@ public:
 	Field();
 	inline GostMode getGostMode() const;
 	void setGostMode(const GostMode mode);
-	const std::shared_ptr<Gost> const getGost(const GostType type) const;
-	inline const std::shared_ptr<PacMan> const getPacMan() const;
+	const std::shared_ptr<Gost> getGost(const GostType type) const;
+	inline const std::shared_ptr<PacMan> getPacMan() const;
 	void setBlinkyReady();
 	void setPinkyReady();
 	void setInkyReady();
@@ -72,7 +72,7 @@ inline GostMode Field::getGostMode() const
 {
 	return mode_;
 }
-inline const std::shared_ptr<PacMan> const Field::getPacMan() const
+inline const std::shared_ptr<PacMan> Field::getPacMan() const
 {
 	return pacMan_;
 }

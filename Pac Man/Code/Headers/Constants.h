@@ -23,6 +23,7 @@ inline int getVertical()
 {
 	return 36;
 }
+
 inline int getDinamicSize() 
 {
 	 return 16;

@@ -16,7 +16,7 @@ public:
 	inline StaticSpriteType getType() const;
 	inline COLORREF getColorAt(const POINT& point) const;
 	void printOn(const int x, const int y, const HDC hdc) const;
-	const static std::shared_ptr<StaticSprite> const createSprite(const StaticSpriteType type, const bool sample[]);
+	const static std::shared_ptr<StaticSprite> createSprite(const StaticSpriteType type, const bool sample[]);
 	virtual ~StaticSprite() {};
 private:
 	StaticSprite(StaticSprite const& sprite);
