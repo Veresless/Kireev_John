@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "../Headers/Game.h"
+#include "Game.h"
 
 Game::Game(): lifes_(getStartLifes()), deltaTime_(getDefaultDeltaTime()), level_(getStartLevel()),
 schore_(0), gostDieCount_(0), countEatenPoints_(0), energiserTime_(0), energiserTimeOn_(true), live_(true){}

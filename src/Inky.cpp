@@ -1,4 +1,4 @@
-#include "../Headers/Inky.h"
+#include "Inky.h"
 
 
 Inky::Inky() : Gost(getCayan(), getBlue(), getInkyStartPosition(), getInkyRetreatPoint()){}

@@ -1,4 +1,4 @@
-#include "../Headers/StaticSprite.h"
+#include "StaticSprite.h"
 
 StaticSprite::StaticSprite(const StaticSpriteType type, const COLORREF mainColor, const bool sample[]) :
 	size_(getSize()), type_(type), mainColor_(mainColor), backgroundColor_(getBackgroundColor())

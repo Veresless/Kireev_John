@@ -1,4 +1,4 @@
-#include "../Headers/DinamicSprite.h"
+#include "DinamicSprite.h"
 
 DinamicSprite::DinamicSprite(const COLORREF mainColor, const POINT& position, const bool sample[]) : 
 	size_(getDinamicSize()), mainColor_(mainColor), backgroundColor_(getBackgroundColor()),

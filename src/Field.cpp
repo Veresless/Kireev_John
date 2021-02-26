@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <string>
 
-#include "../Headers/Field.h"
+#include "Field.h"
 
 Field::Field(): hwnd_(GetConsoleWindow()), hdc_(GetDC(hwnd_)), 
 blinkyReady(false), pinkyReady(false), inkyReady(false), clydeReady(false), mode_(GostMode::ATTACK),

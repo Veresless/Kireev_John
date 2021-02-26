@@ -1,5 +1,5 @@
-#include "../Headers/Clyde.h"
-#include "math.h"
+#include "Clyde.h"
+#include <math.h>
 
 Clyde::Clyde() : Gost(getOrange(), getBlue(), getClydeStartPosition(), getClydeRetreatPoint()){}
 void Clyde::setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky)

@@ -1,4 +1,4 @@
-#include "../Headers/Pinky.h"
+#include "Pinky.h"
 
 Pinky::Pinky() : Gost(getPink(), getBlue(), getPinkyStartPosition(), getPinkyRetreatPoint()) {}
 void Pinky::setDirectionPoint(const POINT& point, const Direction direction, const POINT& blinky)
